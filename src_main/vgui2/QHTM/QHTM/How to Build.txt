@@ -1,0 +1,68 @@
+Written by Russ Freeman Copyright ©1998-2001.
+Email: support@gipsysoft.com
+Web site: http://www.gipsysoft.com/
+Last updated: July 3, 2001, Version 1.4
+
+
+How to build QHTM
+=================
+In these instruction replace <drive:> with the drive letter where you will
+build QHTM.
+e.g. If my main drive is "C:" then
+	"<drive:>\projects"
+becomes
+	"c:\projects"
+
+
+Directory Structure
+-------------------
+My directory structure is as follows, this is detailed in general on my web
+site at http://www.gipsysoft.com/articles/project/index.shtml:
+<drive:>
+    \    projects
+    \    projects    \    components
+    \    projects    \    components    \    QHTM
+    \    projects    \    components    \    QHTM    \    APIExample
+    \    projects    \    components    \    QHTM    \    APIExampleStatic
+    \    projects    \    components    \    QHTM    \    QHTMMFC
+
+You will need to add "<drive:>\projects\components" to your search path. In
+WindowsNT do this from the control panel applet System. In Windows 9x you
+will need to edit your autoexec.bat file and add it to the PATH environment
+variable.
+
+Next, go into DevStudio Options dialog and choose the Directories tab. Add
+"<drive:>\projects\components" to your include and lib directories.
+
+The library header files and the LIB and DLL files all get put in the
+"<drive:>\projects\components" directory.
+
+
+Compiling
+---------
+To build QHTM open the devstudio project "<drive:>\projects\Components\QHTM\QHTM.dsw".
+You should build "Win32 Debug" and "Win32 Release" configurations.
+
+From the QHTM project you can also build the two examples, they are setup to build
+without change and to link with the production DLLs.
+
+APIExampleStatic demonstrates how to build the project and all of it's components statically
+linked and therefore removes the need for an extra support DLL.
+
+
+It won't build!
+---------------
+If you have any problems email support@gipsysoft.com, before doing so please ensure all files
+are properly extracted and that every attempt has been made to resolve the problem yourself.
+
+
+Bug reporting
+-------------
+If you find a bug please send me the minimum needed to reproduce the problem, the smaller the
+samples, C++ or HTML, the quicker I will find a solution. I intend to add a forum to the
+GipsySoft.com website where problems can be reported and commented on, as well as suggestion
+publicly aired. Please bear with me while I get this set up.
+
+Thanks for purchasing QHTM. if you have any suggestions or queries don't hesitate to contact me.
+
+Russ Freeman

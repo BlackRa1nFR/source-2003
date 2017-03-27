@@ -1,0 +1,102 @@
+//========= Copyright © 1996-2001, Valve LLC, All rights reserved. ============
+//
+// Purpose: Fires an output when the map spawns (or respawns if not set to 
+//			only fire once). It can be set to check a global state before firing.
+//
+// $NoKeywords: $
+//=============================================================================
+
+#include "cbase.h"
+#include "entityinput.h"
+#include "entityoutput.h"
+#include "eventqueue.h"
+#include "mathlib.h"
+#include "globalstate.h"
+
+
+const int SF_AUTO_FIREONCE		= 0x01;
+const int SF_AUTO_FIREONRELOAD	= 0x02;
+
+
+class CLogicAuto : public CBaseEntity
+{
+public:
+	DECLARE_CLASS( CLogicAuto, CBaseEntity );
+
+	void Activate(void);
+	void Think(void);
+
+	int ObjectCaps(void) { return BaseClass::ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
+
+	DECLARE_DATADESC();
+
+private:
+
+	// fired no matter why the map loaded
+	COutputEvent m_OnMapSpawn;
+
+	// fired for specified types of map loads
+	COutputEvent m_OnNewGame;
+	COutputEvent m_OnLoadGame;
+	COutputEvent m_OnMapTransition;
+
+	string_t m_globalstate;
+};
+
+LINK_ENTITY_TO_CLASS(logic_auto, CLogicAuto);
+
+
+BEGIN_DATADESC( CLogicAuto )
+
+	DEFINE_KEYFIELD(CLogicAuto, m_globalstate, FIELD_STRING, "globalstate"),
+
+	// Outputs
+	DEFINE_OUTPUT(CLogicAuto, m_OnMapSpawn, "OnMapSpawn"),
+	DEFINE_OUTPUT(CLogicAuto, m_OnNewGame, "OnNewGame"),
+	DEFINE_OUTPUT(CLogicAuto, m_OnLoadGame, "OnLoadGame"),
+	DEFINE_OUTPUT(CLogicAuto, m_OnMapTransition, "OnMapTransition"),
+
+END_DATADESC()
+
+
+//------------------------------------------------------------------------------
+// Purpose : Fire my outputs here if I fire on map reload
+//------------------------------------------------------------------------------
+void CLogicAuto::Activate(void)
+{
+	BaseClass::Activate();
+	SetNextThink( gpGlobals->curtime + 0.2 );
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: Called shortly after level spawn. Checks the global state and fires
+//			targets if the global state is set or if there is not global state
+//			to check.
+//-----------------------------------------------------------------------------
+void CLogicAuto::Think(void)
+{
+	if (!m_globalstate || GlobalEntity_GetState(m_globalstate) == GLOBAL_ON)
+	{
+		if (gpGlobals->eLoadType == MapLoad_Transition)
+		{
+			m_OnMapTransition.FireOutput(NULL, this);
+		}
+		else if (gpGlobals->eLoadType == MapLoad_NewGame)
+		{
+			m_OnNewGame.FireOutput(NULL, this);
+		}
+		else if (gpGlobals->eLoadType == MapLoad_LoadGame)
+		{
+			m_OnLoadGame.FireOutput(NULL, this);
+		}
+
+		m_OnMapSpawn.FireOutput(NULL, this);
+
+		if (m_spawnflags & SF_AUTO_FIREONCE)
+		{
+			UTIL_Remove(this);
+		}
+	}
+}
+

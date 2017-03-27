@@ -1,0 +1,104 @@
+#
+# HK_Base library for HL
+#
+# June 2003, alfred@valvesoftware.com
+#
+
+SOURCE_DSP=../ivp/havana/havok/hk_base/hk_base.dsp
+HK_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok
+HK_BASE_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_base
+HK_BASE_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/hk_base
+
+HK_BASE_MEMORY_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_base/memory
+HK_BASE_MEMORY_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/hk_base/memory
+
+HK_BASE_HASH_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_base/hash
+HK_BASE_HASH_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/hk_base/hash
+
+HK_BASE_ARRAY_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_base/array
+HK_BASE_ARRAY_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/hk_base/array
+
+HK_BASE_STOPWATCH_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_base/stopwatch
+HK_BASE_STOPWATCH_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/hk_base/stopwatch
+
+HK_BASE_STRING_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_base/string
+HK_BASE_STRING_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/hk_base/string
+
+HK_BASE_IDSERVER_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_base/id_server
+HK_BASE_IDSERVER_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/hk_base/id_server
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS) -D_LIB -DLINUX
+#CFLAGS+= -g -ggdb
+
+INCLUDEDIRS=-I$(HK_SRC_DIR) -I$(HK_BASE_MEMORY_SRC_DIR) -I$(HK_BASE_SRC_DIR) -I$(HK_BASE_IDSERVER_SRC_DIR) -I$(HK_BASE_STOPWATCH_SRC_DIR) -I$(HK_BASE_ARRAY_SRC_DIR) -I$(HK_BASE_HASH_SRC_DIR)
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) -w $(CFLAGS) -o $@ -c $<
+
+#####################################################################
+
+HK_BASE = \
+	$(HK_BASE_OBJ_DIR)/console.o \
+	$(HK_BASE_OBJ_DIR)/base_types.o \
+	
+
+HK_BASE_MEMORY = \
+	$(HK_BASE_MEMORY_OBJ_DIR)/memory.o \
+	$(HK_BASE_MEMORY_OBJ_DIR)/memory_util.o \
+
+HK_BASE_HASH = \
+	$(HK_BASE_HASH_OBJ_DIR)/hash.o \
+
+HK_BASE_ARRAY = \
+	$(HK_BASE_ARRAY_OBJ_DIR)/array.o \
+
+HK_BASE_IDSERVER = \
+	$(HK_BASE_IDSERVER_OBJ_DIR)/id_server.o \
+
+HK_BASE_STOPWATCH = \
+	$(HK_BASE_STOPWATCH_OBJ_DIR)/stopwatch.o \
+
+HK_BASE_STRING = \
+	$(HK_BASE_STRING_OBJ_DIR)/string.o \
+
+all: dirs hk_base_$(ARCH).$(LIBEXT)
+
+dirs:
+	-mkdir $(BUILD_OBJ_DIR)
+	-mkdir -p $(HK_BASE_OBJ_DIR)
+	-mkdir $(HK_BASE_IDSERVER_OBJ_DIR)
+	-mkdir $(HK_BASE_ARRAY_OBJ_DIR)
+	-mkdir $(HK_BASE_STRING_OBJ_DIR)
+	-mkdir $(HK_BASE_MEMORY_OBJ_DIR)
+	-mkdir $(HK_BASE_STOPWATCH_OBJ_DIR)
+	-mkdir $(HK_BASE_STRING_OBJ_DIR)
+	-mkdir $(HK_BASE_HASH_OBJ_DIR)
+	$(CHECK_DSP) $(SOURCE_DSP)
+
+hk_base_$(ARCH).$(LIBEXT): $(HK_BASE) $(HK_BASE_MEMORY) $(HK_BASE_HASH) $(HK_BASE_ARRAY) $(HK_BASE_IDSERVER) $(HK_BASE_STOPWATCH) $(HK_BASE_STRING)
+	$(ARCMD) $@ $(HK_BASE) $(HK_BASE_MEMORY)  $(HK_BASE_HASH) $(HK_BASE_ARRAY) $(HK_BASE_IDSERVER) $(HK_BASE_STOPWATCH) $(HK_BASE_STRING) $(ARLDFLAGS)	
+
+$(HK_BASE_OBJ_DIR)/%.o: $(HK_BASE_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_BASE_MEMORY_OBJ_DIR)/%.o: $(HK_BASE_MEMORY_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_BASE_HASH_OBJ_DIR)/%.o: $(HK_BASE_HASH_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_BASE_STRING_OBJ_DIR)/%.o: $(HK_BASE_STRING_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_BASE_STOPWATCH_OBJ_DIR)/%.o: $(HK_BASE_STOPWATCH_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_BASE_ARRAY_OBJ_DIR)/%.o: $(HK_BASE_ARRAY_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_BASE_IDSERVER_OBJ_DIR)/%.o: $(HK_BASE_IDSERVER_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+
+clean:
+	-rm -rf $(HK_BASE_OBJ_DIR)
+	-rm -f hk_base_$(ARCH).$(LIBEXT)

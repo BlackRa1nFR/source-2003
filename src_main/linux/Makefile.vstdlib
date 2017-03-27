@@ -1,0 +1,55 @@
+#
+# VSTDLib library for HL
+#
+# June 2003, alfred@valvesoftware.com
+#
+
+SOURCE_DSP=../vstdlib/vstdlib.dsp
+VSTDLIB_SRC_DIR=$(SOURCE_DIR)/vstdlib
+TIER0_PUBLIC_SRC_DIR=$(SOURCE_DIR)/public/tier0
+
+VSTDLIB_OBJ_DIR=$(BUILD_OBJ_DIR)/vstdlib
+TIER0_OBJ_DIR=$(BUILD_OBJ_DIR)/vstdlib/tier0
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS)
+DEBUG = -g -ggdb
+CFLAGS+= $(DEBUG)
+
+INCLUDEDIRS=-I$(PUBLIC_SRC_DIR) -Dstrcmpi=strcasecmp
+
+LDFLAGS= -lm tier0_$(ARCH).$(SHLIBEXT)
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) -w $(CFLAGS) -o $@ -c $<
+
+#####################################################################
+
+
+VSTDLIB_OBJS = \
+	$(VSTDLIB_OBJ_DIR)/commandline.o \
+	$(VSTDLIB_OBJ_DIR)/random.o \
+	$(VSTDLIB_OBJ_DIR)/strtools.o \
+
+TIER0_OBJS = \
+	$(TIER0_OBJ_DIR)/memoverride.o 
+
+all: dirs vstdlib_$(ARCH).$(SHLIBEXT)
+
+dirs:
+	-mkdir $(BUILD_OBJ_DIR)
+	-mkdir $(VSTDLIB_OBJ_DIR)
+	-mkdir $(TIER0_OBJ_DIR)
+	$(CHECK_DSP) $(SOURCE_DSP)
+
+vstdlib_$(ARCH).$(SHLIBEXT): $(VSTDLIB_OBJS) $(TIER0_OBJS)
+	$(CPLUS) $(SHLIBLDFLAGS) $(DEBUG) -o $(BUILD_DIR)/$@ $(VSTDLIB_OBJS) $(TIER0_OBJS) $(LDFLAGS) $(CPP_LIB)
+
+$(VSTDLIB_OBJ_DIR)/%.o: $(VSTDLIB_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(TIER0_OBJ_DIR)/%.o: $(TIER0_PUBLIC_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+clean:
+	-rm -rf $(VSTDLIB_OBJ_DIR)
+	-rm -rf $(TIER0_OBJ_DIR)
+	-rm -f vstdlib_$(ARCH).$(SHLIBEXT)

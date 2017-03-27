@@ -1,0 +1,44 @@
+//	STATIC: "MACROS"			"0..1"
+
+#include "common_ps_fxc.h"
+
+// CENTROID: TEXCOORD2
+
+sampler BaseSampler	: register( s0 );
+sampler BaseSampler2: register( s1 );
+sampler LightmapSampler: register( s2 );
+sampler LightmapAlphaSampler: register( s3 );
+sampler MacrosSampler: register( s4 );
+
+struct PS_INPUT
+{
+	float2 baseCoord				: TEXCOORD0;
+	float2 baseCoord2				: TEXCOORD1;
+	float2 lightmapCoord			: TEXCOORD2;
+	float2 macrosCoord				: TEXCOORD3;
+};
+
+float4 main( PS_INPUT i ) : COLOR
+{
+	bool bMacros = MACROS ? true : false;
+
+	float4 base = tex2D( BaseSampler, i.baseCoord );
+	base.a = AvgColor( base.rgb );
+	float4 base2 = tex2D( BaseSampler2, i.baseCoord2 );
+	base2.a = AvgColor( base2.rgb );
+
+	float4 lightmap = tex2D( LightmapSampler, i.lightmapCoord );
+	float4 blendFactor = tex2D( LightmapAlphaSampler, i.lightmapCoord );
+
+	float4 color = 2.0f * lightmap * lerp( base2, base, blendFactor.a );
+	if( bMacros )
+	{
+		float4 macros = tex2D( MacrosSampler, i.macrosCoord );
+
+		// Not sure what to do with macro alpha
+		color.rgb *= 2.0f * lerp( macros.a, macros.b, blendFactor.a );
+	}
+
+	return color;
+}
+

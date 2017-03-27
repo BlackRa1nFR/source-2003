@@ -1,0 +1,217 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif\r\n"
+    "#include ""res\\MasterTest.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\MasterTest.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MASTERTEST_DIALOG DIALOGEX 0, 0, 311, 174
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Master Server Stress Tester..."
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "Go!",IDC_GO,8,6,49,13
+    PUSHBUTTON      "Stop Test",IDC_STOPTEST,7,22,49,13
+    PUSHBUTTON      "Reset",IDC_STOP,8,49,49,13
+    EDITTEXT        IDC_RATE,17,81,63,16,ES_AUTOHSCROLL
+    CONTROL         "Spin2",IDC_SPIN_RATE,"msctls_updown32",UDS_SETBUDDYINT | 
+                    UDS_ALIGNLEFT | UDS_AUTOBUDDY | UDS_ARROWKEYS,11,82,9,13
+    EDITTEXT        IDC_EDIT_SOCKETS,17,114,63,16,ES_AUTOHSCROLL
+    CONTROL         "Spin2",IDC_SPIN_SOCKETS,"msctls_updown32",
+                    UDS_SETBUDDYINT | UDS_ALIGNLEFT | UDS_AUTOBUDDY | 
+                    UDS_ARROWKEYS,11,116,9,13
+    EDITTEXT        IDC_EDIT_TIME,17,151,63,16,ES_AUTOHSCROLL
+    CONTROL         "Spin2",IDC_SPIN_TIME,"msctls_updown32",UDS_SETBUDDYINT | 
+                    UDS_ALIGNLEFT | UDS_AUTOBUDDY | UDS_ARROWKEYS,11,148,9,
+                    13
+    DEFPUSHBUTTON   "Quit",IDOK,252,153,50,14
+    CONTROL         "Ping",IDC_RADIO_PING,"Button",BS_AUTORADIOBUTTON,69,5,
+                    54,10
+    LTEXT           "Rate (msgs/second) per connection (1-1000):",IDC_STATIC,
+                    7,69,154,10
+    LTEXT           "No. of sockets to use. (1-256):",IDC_STATIC,7,102,115,
+                    10
+    LTEXT           "Data Sent (#, datasize)",IDC_STATIC,227,6,77,11
+    LTEXT           "Data Rec. (#, datasize)",IDC_STATIC,227,33,77,11
+    LTEXT           "0",IDC_SENT,227,17,79,10
+    LTEXT           "0",IDC_RECV,228,46,79,10
+    LTEXT           "Test Time (1-6000):",IDC_STATIC,7,135,85,10
+    LTEXT           "Time Remaining:",IDC_STATIC,145,99,53,10
+    LTEXT           "0",IDC_TIMELEFT,146,112,55,10
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,141,97,
+                    67,27
+    EDITTEXT        IDC_EDIT1,99,25,107,15,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT2,99,43,107,15,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT3,96,152,107,15,ES_AUTOHSCROLL
+    LTEXT           "Message size ( bytes )",IDC_STATIC,97,135,85,10
+    LTEXT           "Address",IDC_STATIC,67,29,29,14
+    LTEXT           "Port",IDC_STATIC,68,47,29,14
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "MASTERTEST MFC Application\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "MASTERTEST\0"
+            VALUE "LegalCopyright", "Copyright © 1998\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "MASTERTEST.EXE\0"
+            VALUE "ProductName", "MASTERTEST Application\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_MASTERTEST_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 304
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 167
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDP_SOCKETS_INIT_FAILED "Windows sockets initialization failed."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif
+#include "res\MasterTest.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -1,0 +1,35 @@
+// TODO
+
+x   Updates for up to 1 day are stored in archive files
+
+The name format is:
+
+x  data/yyyy/mm_dd.txt
+
+x The current data set is appended upon receipt of each sample to
+
+data/unsaved.txt
+
+x at the time when the current day changes, the data for the day is saved and unsaved.lst is reset
+x in addition, any loaded data > 2 weeks old is purged from memory
+
+x any time status.exe loads, anything in unsaved.lst is also loaded
+
+x there'll be a dialog for loading data for date ranges in the past
+
+x all data loaded from any file except unsaved.lst will be marked as "from file" and will thus not be re-archived automatically
+
+non-contiguous runs will need to have some kind of new rendering info
+
+x samples loaded from disk will have some visible indicator
+
+the graphs should show a uniform time distribution rather than 1 pixel per sample
+
+There should be a tool to write peak data for all .txt files into a new delimited .txt file that can be loaded into excel
+  -- should be able to gather data on one or more specific mods, too
+
+scrolling backward should automatically load old data
+
+x data sets out of view should be released from memory over time (use a memory pool and mru?)
+
+consider loading data sets partially (i.e., don't load modlist unless need to track a specific mod)

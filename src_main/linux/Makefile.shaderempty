@@ -1,0 +1,50 @@
+#
+# ShaderEmpty library for HL
+#
+# June 2003, alfred@valvesoftware.com
+#
+
+SOURCE_DSP=../materialsystem/shaderempty/shaderempty.dsp
+SHADER_SRC_DIR=$(SOURCE_DIR)/materialsystem/shaderempty
+MAT_SRC_DIR=$(SOURCE_DIR)/materialsystem
+
+SHADER_OBJ_DIR=$(BUILD_OBJ_DIR)/materialsystem/shaderempty
+PUBLIC_OBJ_DIR=$(BUILD_OBJ_DIR)/materialsystem/shaderempty/public
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS)
+#CFLAGS+= -g -ggdb
+
+INCLUDEDIRS=-I$(PUBLIC_SRC_DIR) -I$(COMMON_SRC_DIR) -I$(MAT_SRC_DIR) -Dstrcmpi=strcasecmp 
+
+LDFLAGS= -lm -ldl tier0_$(ARCH).$(SHLIBEXT) vstdlib_$(ARCH).$(SHLIBEXT)
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) -w $(CFLAGS) -o $@ -c $<
+
+#####################################################################
+
+SHADER_OBJS = \
+	$(SHADER_OBJ_DIR)/shaderapiempty.o \
+
+PUBLIC_OBJS = \
+	$(PUBLIC_OBJ_DIR)/interface.o \
+
+all: dirs shaderapiempty_$(ARCH).$(SHLIBEXT)
+
+dirs:
+	-mkdir $(BUILD_OBJ_DIR)
+	-mkdir $(SHADER_OBJ_DIR)
+	-mkdir $(PUBLIC_OBJ_DIR)
+	$(CHECK_DSP) $(SOURCE_DSP)
+
+shaderapiempty_$(ARCH).$(SHLIBEXT): $(SHADER_OBJS) $(PUBLIC_OBJS)
+	$(CPLUS) $(SHLIBLDFLAGS) -o $(BUILD_DIR)/$@ $(SHADER_OBJS) $(PUBLIC_OBJS) $(LDFLAGS) $(CPP_LIB)
+
+$(SHADER_OBJ_DIR)/%.o: $(SHADER_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(PUBLIC_OBJ_DIR)/%.o: $(PUBLIC_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+clean:
+	-rm -rf $(SHADER_OBJ_DIR)
+	-rm -f shaderapiempty_$(ARCH).$(SHLIBEXT)

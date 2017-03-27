@@ -1,0 +1,205 @@
+#
+# Engine for HL2
+#
+# June 2003, alfred@valvesoftware.com
+#
+
+SOURCE_DSP=../engine/engine.dsp
+
+ENGINE_SRC_DIR=$(SOURCE_DIR)/engine
+TIER0_PUBLIC_SRC_DIR=$(SOURCE_DIR)/public/tier0
+SOUND_SRC_DIR=$(SOURCE_DIR)/engine/audio/public
+SND_SRC_DIR=$(SOURCE_DIR)/engine/audio/private
+
+ENGINE_OBJ_DIR=$(BUILD_OBJ_DIR)/engine
+TIER0_OBJ_DIR=$(BUILD_OBJ_DIR)/engine/tier0
+PUBLIC_OBJ_DIR=$(BUILD_OBJ_DIR)/engine/public
+COMMON_OBJ_DIR=$(BUILD_OBJ_DIR)/engine/common
+SND_OBJ_DIR=$(BUILD_OBJ_DIR)/engine/audio
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS)
+DEBUG= -g -ggdb
+CFLAGS+= $(DEBUG)
+
+INCLUDEDIRS=-I$(PUBLIC_SRC_DIR) -I$(COMMON_SRC_DIR) -I$(ENGINE_SRC_DIR) -I$(SOUND_SRC_DIR)
+DEFINES=-DSWDS -DVOICE_OVER_IP -DBUMPMAP -DENGINE_DLL -Dstrcmpi=strcasecmp -D_alloca=alloca -DIMAGE_LOADER_NO_DXTC
+
+LDFLAGS= -lm -ldl tier0_$(ARCH).$(SHLIBEXT) vstdlib_$(ARCH).$(SHLIBEXT)
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) $(DEFINES) -w $(CFLAGS) -o $@ -c $<
+
+#####################################################################
+
+
+ENGINE_OBJS = \
+	$(ENGINE_OBJ_DIR)/EngineSoundServer.o \
+	$(ENGINE_OBJ_DIR)/baseautocompletefilelist.o \
+	$(ENGINE_OBJ_DIR)/bitbuf_errorhandler.o \
+	$(ENGINE_OBJ_DIR)/buildnum.o \
+	$(ENGINE_OBJ_DIR)/changeframelist.o \
+	$(ENGINE_OBJ_DIR)/checksum_engine.o \
+	$(ENGINE_OBJ_DIR)/cl_null.o \
+	$(ENGINE_OBJ_DIR)/cmd.o \
+	$(ENGINE_OBJ_DIR)/client.o \
+	$(ENGINE_OBJ_DIR)/cmodel.o \
+	$(ENGINE_OBJ_DIR)/cmodel_bsp.o \
+	$(ENGINE_OBJ_DIR)/cmodel_disp.o \
+	$(ENGINE_OBJ_DIR)/common.o \
+	$(ENGINE_OBJ_DIR)/console.o \
+	$(ENGINE_OBJ_DIR)/cspatialpartition.o \
+	$(ENGINE_OBJ_DIR)/cvar.o \
+	$(ENGINE_OBJ_DIR)/debug_leafvis.o \
+	$(ENGINE_OBJ_DIR)/decal_clip.o \
+	$(ENGINE_OBJ_DIR)/decals.o \
+	$(ENGINE_OBJ_DIR)/disp.o \
+	$(ENGINE_OBJ_DIR)/disp_defs.o \
+	$(ENGINE_OBJ_DIR)/disp_interface.o \
+	$(ENGINE_OBJ_DIR)/disp_helpers.o \
+	$(ENGINE_OBJ_DIR)/disp_leaflink.o \
+	$(ENGINE_OBJ_DIR)/disp_mapload.o \
+	$(ENGINE_OBJ_DIR)/dispchain.o \
+	$(ENGINE_OBJ_DIR)/dt.o \
+	$(ENGINE_OBJ_DIR)/dt_encode.o \
+	$(ENGINE_OBJ_DIR)/dt_common_eng.o \
+	$(ENGINE_OBJ_DIR)/dt_instrumentation.o \
+	$(ENGINE_OBJ_DIR)/dt_instrumentation_server.o \
+	$(ENGINE_OBJ_DIR)/dt_localtransfer.o \
+	$(ENGINE_OBJ_DIR)/dt_recv_decoder.o \
+	$(ENGINE_OBJ_DIR)/dt_recv_eng.o \
+	$(ENGINE_OBJ_DIR)/dt_send_eng.o \
+	$(ENGINE_OBJ_DIR)/dt_stack.o \
+	$(ENGINE_OBJ_DIR)/dt_test.o \
+	$(ENGINE_OBJ_DIR)/enginesingleuserfilter.o \
+	$(ENGINE_OBJ_DIR)/enginestats.o \
+	$(ENGINE_OBJ_DIR)/enginetrace.o \
+	$(ENGINE_OBJ_DIR)/filesystem_engine.o \
+	$(ENGINE_OBJ_DIR)/gametrace_engine.o \
+	$(ENGINE_OBJ_DIR)/gl_draw.o \
+	$(ENGINE_OBJ_DIR)/gl_rsurf.o \
+	$(ENGINE_OBJ_DIR)/gl_shader.o \
+	$(ENGINE_OBJ_DIR)/host.o \
+	$(ENGINE_OBJ_DIR)/host_cmd.o \
+	$(ENGINE_OBJ_DIR)/host_listmaps.o \
+	$(ENGINE_OBJ_DIR)/host_state.o \
+	$(ENGINE_OBJ_DIR)/info.o \
+	$(ENGINE_OBJ_DIR)/initmathlib.o \
+	$(ENGINE_OBJ_DIR)/l_studio.o \
+	$(ENGINE_OBJ_DIR)/LocalNetworkBackdoor.o \
+	$(ENGINE_OBJ_DIR)/materialproxyfactory.o \
+	$(ENGINE_OBJ_DIR)/mod_vis.o \
+	$(ENGINE_OBJ_DIR)/ModelInfo.o \
+	$(ENGINE_OBJ_DIR)/modelloader.o \
+	$(ENGINE_OBJ_DIR)/matsys_interface.o \
+	$(ENGINE_OBJ_DIR)/net_chan.o \
+	$(ENGINE_OBJ_DIR)/net_synctags.o \
+	$(ENGINE_OBJ_DIR)/net_ws.o \
+	$(ENGINE_OBJ_DIR)/networkstringtable.o \
+	$(ENGINE_OBJ_DIR)/NetworkStringTableItem.o \
+	$(ENGINE_OBJ_DIR)/networkstringtableserver.o \
+	$(ENGINE_OBJ_DIR)/OcclusionSystem.o \
+	$(ENGINE_OBJ_DIR)/packed_entity.o \
+	$(ENGINE_OBJ_DIR)/pr_edict.o \
+	$(ENGINE_OBJ_DIR)/precache.o \
+	$(ENGINE_OBJ_DIR)/quakedef.o \
+	$(ENGINE_OBJ_DIR)/randomstream.o \
+	$(ENGINE_OBJ_DIR)/recventlist.o \
+	$(ENGINE_OBJ_DIR)/staticpropmgr.o \
+	$(ENGINE_OBJ_DIR)/sv_ents_write.o \
+	$(ENGINE_OBJ_DIR)/sv_filter.o \
+	$(ENGINE_OBJ_DIR)/sv_framesnapshot.o \
+	$(ENGINE_OBJ_DIR)/sv_log.o \
+	$(ENGINE_OBJ_DIR)/sv_main.o \
+	$(ENGINE_OBJ_DIR)/sv_master.o \
+	$(ENGINE_OBJ_DIR)/sv_packedentities.o \
+	$(ENGINE_OBJ_DIR)/sv_phys.o \
+	$(ENGINE_OBJ_DIR)/sv_precache.o \
+	$(ENGINE_OBJ_DIR)/sv_rcom.o \
+	$(ENGINE_OBJ_DIR)/sv_redirect.o \
+	$(ENGINE_OBJ_DIR)/sv_user.o \
+	$(ENGINE_OBJ_DIR)/sys_dll.o \
+	$(ENGINE_OBJ_DIR)/sys_dll2.o \
+	$(ENGINE_OBJ_DIR)/sys_engine.o \
+	$(ENGINE_OBJ_DIR)/terrainmod_functions.o \
+	$(ENGINE_OBJ_DIR)/testscriptmgr.o \
+	$(ENGINE_OBJ_DIR)/tmessage.o \
+	$(ENGINE_OBJ_DIR)/traceinit.o \
+	$(ENGINE_OBJ_DIR)/voiceserver_impl.o \
+	$(ENGINE_OBJ_DIR)/vengineserver_impl.o \
+	$(ENGINE_OBJ_DIR)/vprof_engine.o \
+	$(ENGINE_OBJ_DIR)/world.o \
+	$(ENGINE_OBJ_DIR)/zone.o \
+	$(ENGINE_OBJ_DIR)/sys_linuxwind.o \
+
+TIER0_OBJS = \
+	$(TIER0_OBJ_DIR)/memoverride.o \
+
+PUBLIC_OBJS = \
+	$(PUBLIC_OBJ_DIR)/bitbuf.o \
+	$(PUBLIC_OBJ_DIR)/bsptreedata.o \
+	$(PUBLIC_OBJ_DIR)/bumpvects.o \
+	$(PUBLIC_OBJ_DIR)/characterset.o \
+	$(PUBLIC_OBJ_DIR)/checksum_crc.o \
+	$(PUBLIC_OBJ_DIR)/checksum_md5.o \
+	$(PUBLIC_OBJ_DIR)/collisionutils.o \
+	$(PUBLIC_OBJ_DIR)/convar.o \
+	$(PUBLIC_OBJ_DIR)/crtmemdebug.o \
+	$(PUBLIC_OBJ_DIR)/dt_recv.o \
+	$(PUBLIC_OBJ_DIR)/dt_send.o \
+	$(PUBLIC_OBJ_DIR)/filesystem_helpers.o \
+	$(PUBLIC_OBJ_DIR)/imageloader.o \
+	$(PUBLIC_OBJ_DIR)/interface.o \
+	$(PUBLIC_OBJ_DIR)/mathlib.o \
+	$(PUBLIC_OBJ_DIR)/measure_section.o \
+	$(PUBLIC_OBJ_DIR)/mem_fgets.o \
+	$(PUBLIC_OBJ_DIR)/mempool.o \
+	$(PUBLIC_OBJ_DIR)/networkvar.o \
+	$(PUBLIC_OBJ_DIR)/resource_file.o \
+	$(PUBLIC_OBJ_DIR)/tgawriter.o \
+	$(PUBLIC_OBJ_DIR)/utlbuffer.o \
+	$(PUBLIC_OBJ_DIR)/utlsymbol.o \
+	$(PUBLIC_OBJ_DIR)/vallocator.o \
+	$(PUBLIC_OBJ_DIR)/vmatrix.o \
+
+COMMON_OBJS = \
+	$(COMMON_OBJ_DIR)/builddisp.o \
+	$(COMMON_OBJ_DIR)/disp_common.o \
+	$(COMMON_OBJ_DIR)/disp_powerinfo.o \
+	$(COMMON_OBJ_DIR)/dispcoll_common.o \
+	$(COMMON_OBJ_DIR)/vstring.o \
+
+SND_OBJS = \
+	$(SND_OBJ_DIR)/snd_mem.o \
+	$(SND_OBJ_DIR)/vox.o \
+
+all: dirs engine_$(ARCH).$(SHLIBEXT)
+
+dirs:
+	-mkdir $(BUILD_OBJ_DIR)
+	-mkdir $(ENGINE_OBJ_DIR)
+	-mkdir $(TIER0_OBJ_DIR)
+	-mkdir $(PUBLIC_OBJ_DIR)
+	-mkdir $(COMMON_OBJ_DIR)
+	-mkdir $(SND_OBJ_DIR)
+	$(CHECK_DSP) $(SOURCE_DSP)
+
+engine_$(ARCH).$(SHLIBEXT): $(ENGINE_OBJS) $(TIER0_OBJS) $(PUBLIC_OBJS) $(COMMON_OBJS) $(SND_OBJS)
+	$(CPLUS) $(SHLIBLDFLAGS) $(DEBUG) -o $(BUILD_DIR)/$@ $(ENGINE_OBJS) $(TIER0_OBJS) $(PUBLIC_OBJS) $(COMMON_OBJS) $(SND_OBJS) $(LDFLAGS) $(CPP_LIB)
+
+$(ENGINE_OBJ_DIR)/%.o: $(ENGINE_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(TIER0_OBJ_DIR)/%.o: $(TIER0_PUBLIC_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(PUBLIC_OBJ_DIR)/%.o: $(PUBLIC_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(COMMON_OBJ_DIR)/%.o: $(COMMON_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(SND_OBJ_DIR)/%.o: $(SND_SRC_DIR)/%.cpp
+	$(DO_CC) -I$(SND_SRC_DIR)
+
+clean:
+	-rm -rf $(ENGINE_OBJ_DIR)
+	-rm -f engine_$(ARCH).$(SHLIBEXT)

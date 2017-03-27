@@ -1,0 +1,17 @@
+//
+// QHTMMFC.RC2 - resources Microsoft Visual C++ does not edit directly
+//
+
+#ifdef APSTUDIO_INVOKED
+	#error this file is not editable by Microsoft Visual C++
+#endif //APSTUDIO_INVOKED
+
+LOGO.PNG                RCDATA  DISCARDABLE     "res\\logo.png"
+ID_ABOUT_HTML_RESOURCE  RCDATA  DISCARDABLE     "res\\about.html"
+ID_DEFAULT_HTML					RCDATA  DISCARDABLE     "res\\Default.html"
+ABOUT.PNG               RCDATA  DISCARDABLE     "res\\About.png"
+REFRESH.PNG             RCDATA  DISCARDABLE     "res\\Refresh.png"
+/////////////////////////////////////////////////////////////////////////////
+// Add manually edited resources here...
+
+/////////////////////////////////////////////////////////////////////////////

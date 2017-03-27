@@ -1,0 +1,88 @@
+// STATIC: "BLEND" "0..1"
+
+#include "common_ps_fxc.h"
+
+const HALF3 g_FogColor             : register( c0 );
+const HALF4 g_CheapWaterParams	   : register( c1 );
+
+#define g_CheapWaterStart		g_CheapWaterParams.x
+#define g_CheapWaterEnd			g_CheapWaterParams.y
+#define g_CheapWaterDeltaRecip	g_CheapWaterParams.z
+#define g_CheapWaterStartDivDelta  g_CheapWaterParams.w
+
+sampler EnvmapSampler		: register( s0 );
+sampler NormalMapSampler	: register( s1 );
+
+sampler NormalizeSampler : register( s6 );
+
+struct PS_INPUT
+{
+	float2 normalMapTexCoord		: TEXCOORD0;
+	HALF4 worldSpaceEyeVect		: TEXCOORD1;
+	HALF3x3 tangentSpaceTranspose	: TEXCOORD2;
+};
+
+HALF4 main( PS_INPUT i ) : COLOR 
+{
+	bool bBlend = BLEND ? true : false;
+  
+	HALF4 normalTexel   = tex2D( NormalMapSampler, i.normalMapTexCoord );
+	HALF3 tangentNormal = 2.0 * normalTexel - 1.0;
+	
+	HALF3 worldSpaceNormal = mul( tangentNormal, i.tangentSpaceTranspose );
+	HALF3 worldSpaceEye;
+	
+	HALF worldSpaceDist = 1.0f;	
+	
+#ifdef NV3X
+	// for some reason, fxc doesn't convert length( half3 v ) into all _pp opcodes.
+	if (bBlend) 
+	{
+		worldSpaceEye = i.worldSpaceEyeVect;
+		HALF  worldSpaceDistSqr = dot( worldSpaceEye, worldSpaceEye );
+		HALF  rcpWorldSpaceDist = rsqrt( worldSpaceDistSqr );
+		worldSpaceEye *= rcpWorldSpaceDist;
+		worldSpaceDist = worldSpaceDistSqr * rcpWorldSpaceDist;
+	}
+	else
+	{
+		worldSpaceEye  = texCUBE( NormalizeSampler, i.worldSpaceEyeVect );
+		worldSpaceEye = worldSpaceEye * 2.0 - 1.0;
+	}
+#else  // !NV3X
+	if (bBlend) 
+	{
+		worldSpaceEye = i.worldSpaceEyeVect;
+		worldSpaceDist   = length( worldSpaceEye );
+		worldSpaceEye /= worldSpaceDist;
+	}
+	else
+	{
+		worldSpaceEye  = texCUBE( NormalizeSampler, i.worldSpaceEyeVect );
+		worldSpaceEye = worldSpaceEye * 2.0 - 1.0;
+	}
+#endif
+	
+	HALF3 reflectVect      = CalcReflectionVectorUnnormalized( worldSpaceNormal, worldSpaceEye );
+	
+	HALF  dotResult = dot( worldSpaceEye, worldSpaceNormal ); 
+	dotResult = max( 0.0, dotResult );
+	HALF  fresnelFactor = pow( 1.0 - dotResult, 5 );
+	
+	HALF3 specularLighting = texCUBE( EnvmapSampler, reflectVect );
+	specularLighting *= fresnelFactor;
+	
+	HALF alpha;
+
+	if (bBlend)
+	{
+		alpha = worldSpaceDist*g_CheapWaterDeltaRecip - g_CheapWaterStartDivDelta;
+	}
+	else
+	{
+		alpha = 1.0;
+	}
+
+	HALF3 result = g_FogColor + specularLighting;
+	return HALF4( result, alpha );
+}

@@ -1,0 +1,48 @@
+#
+# VSTDLib library for HL
+#
+# June 2003, alfred@valvesoftware.com
+#
+
+SOURCE_DIR=../vtf/vtf.dsp
+VTF_SRC_DIR=$(SOURCE_DIR)/vtf
+VTF_OBJ_DIR=$(BUILD_OBJ_DIR)/vtf
+
+PUBLIC_SRC_DIR=$(SOURCE_DIR)/public
+PUBLIC_OBJ_DIR=$(BUILD_OBJ_DIR)/vtf/public
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS)
+#CFLAGS+= -g -ggdb
+
+INCLUDEDIRS=-I$(PUBLIC_SRC_DIR) -Dstrcmpi=strcasecmp
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) -w $(CFLAGS) -o $@ -c $<
+
+#####################################################################
+
+VTF_OBJS = \
+	$(VTF_OBJ_DIR)/vtf.o \
+
+PUBLIC_OBJS = \
+	$(PUBLIC_OBJ_DIR)/imageloader.o \
+
+
+all: dirs vtf_$(ARCH).$(LIBEXT)
+
+dirs:
+	-mkdir $(BUILD_OBJ_DIR)
+	-mkdir $(VTF_OBJ_DIR)
+	$(CHECK_DSP) $(SOURCE_DSP)
+
+vtf_$(ARCH).$(LIBEXT): $(VTF_OBJS)
+	$(ARCMD) $@ $(VTF_OBJS) $(ARLDFLAGS)	
+
+$(VTF_OBJ_DIR)/%.o: $(VTF_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(PUBLIC_OBJ_DIR)/%.o: $(PUBLIC_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+clean:
+	-rm -rf $(VTF_OBJ_DIR)
+	-rm -f vtf_$(ARCH).$(LIBEXT)

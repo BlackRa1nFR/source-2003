@@ -1,0 +1,217 @@
+//	STATIC: "BASETEXTURE"			"0..1"
+//	STATIC: "DETAILTEXTURE"			"0..1"
+//	STATIC: "BUMPMAP"				"0..1"
+//	STATIC: "CUBEMAP"				"0..1"
+//	STATIC: "VERTEXCOLOR"			"0..1"
+//	STATIC: "ENVMAPMASK"			"0..1"
+//	STATIC: "BASEALPHAENVMAPMASK"	"0..1"
+//	STATIC: "SELFILLUM"				"0..1"
+//	STATIC: "NORMALMAPALPHAENVMAPMASK" "0..1"
+//  STATIC: "AACLAMP" "0..1"
+
+//	SKIP: $DETAILTEXTURE && $BUMPMAP
+//	SKIP: $ENVMAPMASK && $BUMPMAP
+//	SKIP: $NORMALMAPALPHAENVMAPMASK && $BASEALPHAENVMAPMASK
+//	SKIP: $NORMALMAPALPHAENVMAPMASK && $ENVMAPMASK
+//	SKIP: $BASEALPHAENVMAPMASK && $ENVMAPMASK
+//	SKIP: $BASEALPHAENVMAPMASK && $SELFILLUM
+
+// FIXME: Need to be able to disable diffuse lighting . . no, just use unlitgeneric instead!
+// FIXME: Fix all texture transform gunk for detail, bump.
+// FIXME: need to figure out how to skip macro combinations that aren't useful, or at least
+// generate really short programs for them.
+
+#include "common_ps_fxc.h"
+
+
+const HALF4 g_EnvmapTint					: register( c0 );
+const HALF3 g_EnvmapContrast				: register( c2 );
+const HALF3 g_EnvmapSaturation				: register( c3 );
+const HALF4 g_FresnelReflectionReg			: register( c4 );
+#define g_FresnelReflection g_FresnelReflectionReg.a
+#define g_OneMinusFresnelReflection g_FresnelReflectionReg.b
+const HALF  g_OverbrightFactor				: register( c6 );
+const HALF4 g_SelfIllumTint					: register( c7 );
+
+sampler BaseTextureSampler	: register( s0 );
+sampler LightmapSampler		: register( s1 );
+sampler EnvmapSampler		: register( s2 );
+sampler DetailSampler		: register( s3 );
+sampler BumpmapSampler		: register( s4 );
+sampler EnvmapMaskSampler	: register( s5 );
+sampler NormalizeSampler	: register( s6 );
+
+
+
+
+struct PS_INPUT
+{
+	HALF2 baseTexCoord	: TEXCOORD0;
+	// detail textures and bumpmaps are mutually exclusive so that we have enough texcoords.
+	HALF4 detailOrBumpAndEnvmapMaskTexCoord	: TEXCOORD1;
+// CENTROID: TEXCOORD2
+	HALF4 lightmapTexCoord1And2	: TEXCOORD2;
+// CENTROID: TEXCOORD3
+	HALF2 lightmapTexCoord3		: TEXCOORD3;
+	HALF3 worldVertToEyeVector : TEXCOORD4;
+	HALF3x3 tangentSpaceTranspose : TEXCOORD5;	// and 6 and 7
+	HALF4 vertexColor				: COLOR;
+};
+
+HALF4 main( PS_INPUT i ) : COLOR
+{
+	bool bBaseTexture = BASETEXTURE ? true : false;
+	bool bDetailTexture = DETAILTEXTURE ? true : false;
+	bool bBumpmap = BUMPMAP ? true : false;
+	bool bCubemap = CUBEMAP ? true : false;
+	bool bVertexColor = VERTEXCOLOR ? true : false;
+	bool bEnvmapMask = ENVMAPMASK ? true : false;
+	bool bBaseAlphaEnvmapMask = BASEALPHAENVMAPMASK ? true : false;
+	bool bSelfIllum = SELFILLUM ? true : false;
+	bool bNormalMapAlphaEnvmapMask = NORMALMAPALPHAENVMAPMASK ? true : false;
+
+	// hack hack hack
+	// I need to fix this and all vmts that use it since it's screwed up in lightmappedgeneric_dx8.
+	if( bCubemap && bBumpmap )
+	{
+		bNormalMapAlphaEnvmapMask = true;
+	}
+
+	HALF4 baseColor = HALF4( 1.0f, 1.0f, 1.0f, 1.0f );
+	if( bBaseTexture )
+	{
+		baseColor = tex2D( BaseTextureSampler, i.baseTexCoord );
+	}
+
+	HALF3 detailColor = HALF3( 1.0f, 1.0f, 1.0f );
+	if( bDetailTexture )
+	{
+		detailColor = 2.0 * tex2D( DetailSampler, i.detailOrBumpAndEnvmapMaskTexCoord.xy );
+	}
+
+	HALF3 lightmapColor1 = HALF3( 1.0f, 1.0f, 1.0f );
+	HALF3 lightmapColor2 = HALF3( 1.0f, 1.0f, 1.0f );
+	HALF3 lightmapColor3 = HALF3( 1.0f, 1.0f, 1.0f );
+	if( bBumpmap )
+	{
+		HALF2 bumpCoord1;
+		HALF2 bumpCoord2;
+		HALF2 bumpCoord3;
+		ComputeBumpedLightmapCoordinates( i.lightmapTexCoord1And2, i.lightmapTexCoord3.xy,
+			bumpCoord1, bumpCoord2, bumpCoord3 );
+		
+		lightmapColor1 = tex2D( LightmapSampler, bumpCoord1 );
+		lightmapColor2 = tex2D( LightmapSampler, bumpCoord2 );
+		lightmapColor3 = tex2D( LightmapSampler, bumpCoord3 );
+	}
+	else
+	{
+		HALF2 bumpCoord1 = ComputeLightmapCoordinates( i.lightmapTexCoord1And2, i.lightmapTexCoord3.xy );
+		lightmapColor1 = tex2D( LightmapSampler, bumpCoord1 );
+	}
+
+	HALF3 specularFactor = 1.0f;
+	
+	HALF3 normal = HALF3( 0.0f, 0.0f, 1.0f );
+	if( bBumpmap )
+	{
+		HALF4 normalTexel;
+		normalTexel = tex2D( BumpmapSampler, i.detailOrBumpAndEnvmapMaskTexCoord.xy );
+		if( bNormalMapAlphaEnvmapMask )
+		{
+			specularFactor *= normalTexel.a;
+		}
+		normal = 2.0 * normalTexel - 1.0;
+	}
+	if( bEnvmapMask )
+	{
+		specularFactor *= tex2D( EnvmapMaskSampler, i.detailOrBumpAndEnvmapMaskTexCoord.wz ).xyz;	
+	}
+	if( bBaseAlphaEnvmapMask )
+	{
+		specularFactor *= 1.0 - baseColor.a; // this blows!
+	}
+
+	HALF3 diffuseLighting = HALF3( 1.0f, 1.0f, 1.0f );
+	if( bBumpmap )
+	{
+		diffuseLighting = saturate( dot( normal, bumpBasis[0] ) ) * lightmapColor1 +
+						  saturate( dot( normal, bumpBasis[1] ) ) * lightmapColor2 +
+						  saturate( dot( normal, bumpBasis[2] ) ) * lightmapColor3;
+	}
+	else
+	{
+		diffuseLighting = lightmapColor1;
+	}
+
+	HALF3 albedo = HALF3( 1.0f, 1.0f, 1.0f );
+	HALF alpha = 1.0f;
+	if( bBaseTexture )
+	{
+		albedo *= baseColor;
+		if( !bBaseAlphaEnvmapMask && !bSelfIllum )
+		{
+			alpha *= baseColor.a;
+		}
+	}
+
+	if( bDetailTexture )
+	{
+		albedo *= detailColor;
+	}
+
+	// The vertex color contains the modulation color + vertex color combined
+	albedo *= i.vertexColor;
+	alpha *= i.vertexColor.a; // not sure about this one
+
+	HALF3 diffuseComponent = albedo * diffuseLighting;
+	diffuseComponent *= g_OverbrightFactor;
+
+	if( bSelfIllum )
+	{
+		HALF3 selfIllumComponent = g_SelfIllumTint * albedo;
+		diffuseComponent = lerp( diffuseComponent, selfIllumComponent, baseColor.a );
+	}
+
+	HALF3 specularLighting = HALF3( 0.0f, 0.0f, 0.0f );
+	if( bCubemap )
+	{
+#ifdef NV3X
+		// use dp3s instead of mul/mads on NV3x
+		// only if a bumpmap is used
+		HALF3 worldSpaceNormal;
+		if ( bBumpmap ) 
+		{
+			worldSpaceNormal = mul( normal, i.tangentSpaceTranspose );
+		}
+		else
+		{
+			worldSpaceNormal = mul( i.tangentSpaceTranspose, normal );
+		}
+		HALF3 reflectVect = CalcReflectionVectorUnnormalized( worldSpaceNormal, i.worldVertToEyeVector );
+#else
+		float3 worldSpaceNormal = mul( normal, i.tangentSpaceTranspose );
+		float3 reflectVect = CalcReflectionVectorUnnormalized( worldSpaceNormal, i.worldVertToEyeVector );
+#endif
+
+		// Calc Fresnel factor
+		HALF3 eyeVect = texCUBE( NormalizeSampler, i.worldVertToEyeVector );
+		eyeVect = eyeVect*2.0 - 1.0;
+		HALF fresnel = 1.0 - dot( worldSpaceNormal, eyeVect );
+		fresnel = pow( fresnel, 5.0 );
+		fresnel = fresnel * g_OneMinusFresnelReflection + g_FresnelReflection;
+		
+		specularLighting = texCUBE( EnvmapSampler, reflectVect );
+		specularLighting *= specularFactor;
+		specularLighting *= g_EnvmapTint;
+		HALF3 specularLightingSquared = specularLighting * specularLighting;
+		specularLighting = lerp( specularLighting, specularLightingSquared, g_EnvmapContrast );
+		HALF3 greyScale = dot( specularLighting, HALF3( 1.0f / 3.0f, 1.0f / 3.0f, 1.0f / 3.0f ) );
+		specularLighting = lerp( greyScale, specularLighting, g_EnvmapSaturation );
+		specularLighting *= fresnel;
+	}
+
+	HALF3 result = diffuseComponent + specularLighting;
+	return HALF4( result, alpha );
+}
+

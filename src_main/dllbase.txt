@@ -1,0 +1,9 @@
+engine 		0x20000000
+server game 	0x22000000
+client game 	0x24000000
+vphysics 	0x26000000
+materialsystem 	0x28000000
+shaderapidx8	0x2a000000
+studiorender	0x2c000000
+
+

@@ -1,0 +1,51 @@
+#
+# Tier0 library for HL
+#
+# June 2003, alfred@valvesoftware.com
+#
+
+SOURCE_DSP=../tier0/tier0.dsp
+
+TIER0_SRC_DIR=$(SOURCE_DIR)/tier0
+TIER0_OBJ_DIR=$(BUILD_OBJ_DIR)/tier0
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS)
+CFLAGS+= -g -ggdb
+
+INCLUDEDIRS=-I$(PUBLIC_SRC_DIR) -Dstrcmpi=strcasecmp
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) -w $(CFLAGS) -o $@ -c $<
+
+#####################################################################
+
+TIER0_OBJS = \
+	$(TIER0_OBJ_DIR)/dbg.o \
+	$(TIER0_OBJ_DIR)/extendedtrace.o \
+	$(TIER0_OBJ_DIR)/fasttimer.o \
+	$(TIER0_OBJ_DIR)/mem.o \
+	$(TIER0_OBJ_DIR)/memdbg.o \
+	$(TIER0_OBJ_DIR)/platform_linux.o \
+	$(TIER0_OBJ_DIR)/vcrmode_linux.o \
+	$(TIER0_OBJ_DIR)/vprof.o \
+	$(TIER0_OBJ_DIR)/cpu.o \
+	$(TIER0_OBJ_DIR)/cpu_linux.o \
+	$(TIER0_OBJ_DIR)/memvalidate.o \
+	$(TIER0_OBJ_DIR)/security_linux.o \
+	$(TIER0_OBJ_DIR)/memstd.o \
+
+all: dirs tier0_$(ARCH).$(SHLIBEXT)
+
+dirs:
+	-mkdir $(BUILD_OBJ_DIR)
+	-mkdir $(TIER0_OBJ_DIR)
+	$(CHECK_DSP) $(SOURCE_DSP)
+
+tier0_$(ARCH).$(SHLIBEXT): $(TIER0_OBJS)
+	$(CPLUS) $(SHLIBLDFLAGS) $(DEBUG) -o $(BUILD_DIR)/$@ $(TIER0_OBJS)
+
+$(TIER0_OBJ_DIR)/%.o: $(TIER0_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+clean:
+	-rm -rf $(TIER0_OBJ_DIR)
+	-rm -f tier0_$(ARCH).$(SHLIBEXT)

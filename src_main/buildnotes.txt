@@ -1,0 +1,46 @@
+
+---- BUILD NOTES ----
+Format: 
+	Name
+	Date
+	Notes
+	Files changed (optional)
+
+
+
+
+
+
+---- BUILD NOTES ----
+Format: 
+	Name
+	Date
+		Notes
+		(Optional) files changed 
+
+
+Mike
+2/15/2000
+Checked in some stuff
+	engine.c
+	blah.c
+
+
+---- BUILD NOTES ----
+Format: 
+	Name
+	Date
+	Notes
+	Files changed (optional)
+
+
+
+TEST1
+
+TEST2
+
+TEST3
+
+TEST4
+
+TEST5

@@ -1,0 +1,41 @@
+#
+# UnitLib library for HL
+#
+# June 2003, alfred@valvesoftware.com
+#
+
+SOURCE_DSP=../unitlib/unitlib.dsp
+UNITLIB_SRC_DIR=$(SOURCE_DIR)/unitlib
+UNITLIB_OBJ_DIR=$(BUILD_OBJ_DIR)/unitlib
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS)
+#CFLAGS+= -g -ggdb
+
+INCLUDEDIRS=-I$(PUBLIC_SRC_DIR) -Dstrcmpi=strcasecmp
+
+LDFLAGS= -lm tier0_$(ARCH).$(SHLIBEXT)
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) -w $(CFLAGS) -o $@ -c $<
+
+#####################################################################
+
+
+UNITLIB_OBJS = \
+	$(UNITLIB_OBJ_DIR)/unitlib.o
+
+all: dirs unitlib_$(ARCH).$(SHLIBEXT)
+
+dirs:
+	-mkdir $(BUILD_OBJ_DIR)
+	-mkdir $(UNITLIB_OBJ_DIR)
+	$(CHECK_DSP) $(SOURCE_DSP)
+
+unitlib_$(ARCH).$(SHLIBEXT): $(UNITLIB_OBJS)
+	$(CPLUS) $(SHLIBLDFLAGS) -o $(BUILD_DIR)/$@ $(UNITLIB_OBJS) $(LDFLAGS) $(CPP_LIB)
+
+$(UNITLIB_OBJ_DIR)/%.o: $(UNITLIB_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+clean:
+	-rm -rf $(UNITLIB_OBJ_DIR)
+	-rm -f unitlib_$(ARCH).$(SHLIBEXT)

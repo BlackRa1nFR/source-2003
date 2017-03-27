@@ -1,0 +1,52 @@
+* Tables: Recode to support column and row spanning and to also behave properly when floating.
+* Add support for table CAPTION.
+* Add DL, DT and DD
+* Add WM_COLORSTATIC for background painting
+* Add support for entities such as Euro
+* Table borders should use the 3D colours in the system
+* Support COMPACT for UL and OL
+* Add BASE
+* Support Backrgound images
+* Support transparent and alpha within images
+* Support VAR and DFN as italic
+* Support TT, SAMP and KBD, mono spaced font.
+* Support ISMAP
+* Support FORM
+* Add ability for HTML to be 'added' into the current document using a message like SendMessage( hwnd, QHTM_ADD_TEXT, 0, (LPARAM)"<p>Some more HTML</p>")
+* Notify when the mouse passes over a link (pass ID, title and URL)
+* Add support for icons to the image library.
+
+
+Extras
+------
+
+* HTML Button
+Button control that allows HTML to be used instead of plain text. Ideally it would be a single function call to change a normal button to be a QHTM button.
+Could register a 'class' that would allow buttons on dialogs to be set as HTMl from the getgo ("QHTM_Button").
+
+* HTML Listbox
+Allow HTML to be used in lists boxes. This would mean icons could be use as well as formatting and colours (fore and background colours).
+
+* Open up the renderer so HTML can be 'drawn' onto any device.
+
+* Create Tip of the Day object as an example.
+
+* Log file output with colourd highlights example.
+
+
+
+CSS Stuff to support and my notes
+---------------------------------
+hehe, nothing yet, still reading...
+
+
+HTML that causes problems
+-------------------------
+
+* This just doesn't look right, look at the difference between IE and QHTM.
+Try changing align=left and we get similar stupid differences between QHTM and IE.
+----BEGIN
+<p>a<table bgcolor=yellow align=right> <tr><td>1</td></tr></table>
+<p>b<table bgcolor=yellow align=right> <tr><td>2</td></tr></table>
+<p>c<table bgcolor=yellow align=right> <tr><td>3</td></tr></table>
+----END

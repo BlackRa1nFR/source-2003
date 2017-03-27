@@ -1,0 +1,57 @@
+#include "common_hdr.h"
+
+sampler TexSampler	: register( s0 );
+
+struct PS_INPUT
+{
+	float2 coordTap0				: TEXCOORD0;
+	float2 coordTap1				: TEXCOORD1;
+	float2 coordTap2				: TEXCOORD2;
+	float2 coordTap3				: TEXCOORD3;
+};
+
+float lumThresh : register( c0 );
+
+float4 main( PS_INPUT i ) : COLOR
+{
+	float4 s0, s1, s2, s3;
+
+	// Sample 4 taps
+	s0 = tex2D( TexSampler, i.coordTap0 );
+	s1 = tex2D( TexSampler, i.coordTap1 );
+	s2 = tex2D( TexSampler, i.coordTap2 );
+	s3 = tex2D( TexSampler, i.coordTap3 );
+
+#if 0
+	// Apply threshold
+	float4 v;
+	if( s0.a < lumThresh )
+		v[0] = 0.0f;
+	else
+		v[0] = s0.a;
+	if( s1.a < lumThresh )
+		v[1] = 0.0f;
+	else
+		v[1] = s1.a;
+	if( s2.a < lumThresh )
+		v[2] = 0.0f;
+	else
+		v[2] = s2.a;
+	if( s3.a < lumThresh )
+		v[3] = 0.0f;
+	else
+		v[3] = s3.a;
+#endif
+
+	s0.a = max( 0.0f, s0.a - 16.0f / 255.0f );
+	s1.a = max( 0.0f, s1.a - 16.0f / 255.0f );
+	s2.a = max( 0.0f, s2.a - 16.0f / 255.0f );
+	s3.a = max( 0.0f, s3.a - 16.0f / 255.0f );
+
+	float4 avgColor = ( s0 + s1 + s2 + s3 ) * 0.25f;
+//	float avgLum = dot( v, 0.25f );
+
+//	return float4( avgColor, avgLum );
+	return avgColor;
+}
+

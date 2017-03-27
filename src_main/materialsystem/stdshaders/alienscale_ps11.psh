@@ -1,0 +1,20 @@
+ps.1.1
+
+def c0, 1.0f, 1.0f, 1.0f, 0.5f
+def c1, 0.0f, 0.0f, 0.0f, 0.0f
+
+tex t0			; albedo 1
+tex t1			; albedo 2
+tex t2			; normal map
+texcoord t3		; <sz, tz, nz>
+
+dp3_sat r1.rgba, t3, t2_bx2	; r1 = component of normalmap along cameraz (really want along world->eye vector)
+sub r0.a, r1.a, t2.a	; r0 = r0 - t2.a
+add r0.a, r0.a, c0.a	; r0 = r0 - t2.a + 0.5
+cnd r0, r0.a, c0, c1
+mul_sat r0, r0, r1		; This effectively blats out values of r0 < t2.a
+lrp	r0, r0, t1, t0		; choose between albedo 1 + albedo 2 based on camera z
+mul r0, r0, v0			; Factor in lighting + modulation color
+
+
+

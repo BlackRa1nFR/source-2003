@@ -1,0 +1,31 @@
+ImgLib - Imaging library created by Russ Freeman and Rich Goldstein, MD.
+Copyright (c) 1998-1999 Gipsysoft. All Rights Reserved.
+
+All rights reserved.  You may not distribute the source code to this library
+without the expressed, written consent of the GipsySoft.  You may not use this
+code in your application(s) without permission from the GipsySoft.
+
+Gipsysoft has released source to and hereby gives permission
+to use this code in their commercial and non-commercial application(s),
+as long as said application(s) is not a software library for other
+users to implement in their own applications;
+
+Disclaimer of Warranties.  THE SOFTWARE AND DOCUMENTATION ARE 
+PROVIDED "AS IS.", GIPSYSOFT MAKES NO WARRANTY, EXPRESS OR IMPLIED, 
+INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY OF MERCHANTABILITY, 
+NONINFRINGEMENT OR FITNESS FOR A PARTICULAR PURPOSE.
+
+Limitation of Liability. IN NO EVENT SHALL GIPSYSOFT OR ITS SUPPLIERS 
+BE LIABLE FOR ANY INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL 
+DAMAGES ARISING OUT OF THIS AGREEMENT, WHETHER THE CLAIM IS BASED 
+IN TORT (INCLUDING NEGLIGENCE), CONTRACT OR OTHERWISE EVEN IF 
+GIPSYSOFT WAS ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+Term and Termination.  The licenses granted herein are effective 
+until terminated as set forth in this paragraph.  This Agreement 
+(including all of the licenses granted herein) will terminate 
+automatically and immediately in the event of any breach of its 
+terms or conditions.  In the event of such termination, Licensee 
+shall destroy all copies of the Software and Documentation in its 
+possession or control.
+

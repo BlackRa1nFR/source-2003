@@ -1,0 +1,85 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "NVTriStripLib"=..\NvTriStripLib\NvTriStripLib.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Src/utils/NvTriStripLib", DFCDAAAA
+    ..\nvtristriplib
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "engine"=..\..\engine\engine.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Src/engine", BTEBAAAA
+    ..\..\engine
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "hl"=..\..\dlls\hl.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Src/dlls", ELEBAAAA
+    ..\..\dlls
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "studiomdl"=.\studiomdl.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Src/utils/studiomdl", ZKGBAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Src/utils/studiomdl", ZKGBAAAA
+    .
+    end source code control
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+

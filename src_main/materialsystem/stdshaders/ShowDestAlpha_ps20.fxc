@@ -1,0 +1,33 @@
+// STATIC: "MULTIPLYBYCOLOR" "0..1"
+// STATIC: "MULTIPLYBYALPHA" "0..1"
+// STATIC: "MULTIPLYBY_MAX_HDR_OVERBRIGHT" "0..1"
+#include "common_ps_fxc.h"
+
+sampler TexSampler	: register( s0 );
+
+struct PS_INPUT
+{
+	float2 texCoord				: TEXCOORD0;
+};
+
+const float3 highlight : register( c0 );
+
+float4 main( PS_INPUT i ) : COLOR
+{
+	float4 sample = tex2D( TexSampler, i.texCoord );
+
+#if MULTIPLYBYALPHA
+	float4 result = sample.a;
+#else
+	float4 result = 1.0f;
+#endif
+
+#if MULTIPLYBYCOLOR
+	result.xyz *= sample.xyz;
+#endif
+#if MULTIPLYBY_MAX_HDR_OVERBRIGHT
+	result.xyz *= MAX_HDR_OVERBRIGHT;
+#endif
+	return result;;
+}
+

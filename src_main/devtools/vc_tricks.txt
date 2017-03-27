@@ -1,0 +1,173 @@
+
+This file holds tips and tricks that we've collected.
+
+
+
+------- Search and Replace with Perl --------
+
+To search and replace strings in multiple files, do this:
+	
+	perl -p -i.bak -e "/sSEARCH_FOR/REPLACE_WITH" Filename1 Filename2...
+
+You can do it in a batch command like this:
+
+	for %i in (*.cpp) do perl -p -i.bak -e "/sSEARCH_FOR/REPLACE_WITH" %i
+
+
+Note that SEARCH_FOR and REPLACE_WITH can be Perl regular expressions.
+
+-i specifies a backup filename extension for the files it processes.
+-p wraps the Perl program in code that opens the input file and processes each line in it.
+-e tells it to run the following line of Perl code.
+
+
+------- Large Perforce Integrations -------
+
+When doing Perforce integrations with large numbers of files through the Perforce UI,
+you can get in a situation where you can't submit because a few files haven't been 
+resolved yet, but it is a pain to find the files that aren't resolved yet because the
+list of files is huge and there's no hotkey to sort by which files are resolved.
+
+The command line:
+
+  p4 resolve -n
+
+will list files that still need to be resolved so you can find them directly.
+
+
+
+------- Expand Pointers To Arrays -------
+
+	To show the elements of an array given a pointer in the watch window, just add a 
+	comma followed by the number of elements to display:
+	
+		pArray,25
+
+
+
+------- Function Evaluation -------
+
+	Call program code from debugger 
+	Use quickwatch window, not watch window. e.g. DumpInfo (pFoo) 
+	Great for debug data 
+	Use OutputDebugString or printf 
+	Limitations 20 seconds max. 
+	Terminate on exception. 
+	Only one thread 
+
+	You can do debug output using OutputDebugString (through our DebugOutStraight call).
+	You can also use this to write strings into memory locations by calling sprintf( someString, "a b c d" ).
+
+
+------- Casting In The Debugger -------
+
+	When in the debugger, you can display a symbol even if it's not in the current module 
+	or if it's a static in another file.
+
+	The base syntax is {functionName, cppFilename, dllFilename}, but you can usually leave out the first
+	two elements like this:
+		
+	{,,foo.dll}(CMyClass*)pObject   or   {,,foo.dll}symbolName
+
+	If that doesn't work, add the filename:
+	{,physics_environment.cpp,vphysics.dll}(CSleepObjects*)pObject
+
+	so using an expression like this inside the engine works:
+
+	{,,client.dll}(C_BaseEntity*){*}pEntity
+	{,,client.dll}engine
+
+	
+	Note: You can use this to watch the values of local variables in functions up the stack.
+	If there's a function like Host_Frame that calls a lot of other functions, and you want to
+	watch one of its variables while in other functions, you can do:
+		
+		{Host_Frame,,engine.dll}someVar
+
+
+------- Display GetLastError's value and message -------
+
+	You can display the value GetLastError() will return by putting "@err" in your watch window. 
+	You can see the error message associated with that value by putting "@err,hr" in your watch window. 
+	If you've placed an HRESULT in a variable, adding ",hr" to the variable name in the watch window will 
+	display the associated text. 
+
+
+------- Formatting data in the watch window -------
+
+	Most of this was lifted from "Debugging Applications for Microsoft .NET and Microsoft Windows"
+	by John Robbins.
+
+	To specify the formatting for an expression in the watch window, add a comma, then the format
+	specifier. So "someValue,d" would tell it you want to view the variable called someValue
+	as a signed decimal integer.
+
+	
+	Symbol			Format Description
+	------          ------------------
+	
+	d or i			Signed decimal integer
+	u				Unsigned decimal integer
+	o				Unsigned octal integer
+	x or X			Hexadecimal integer
+	f				Floating point
+	e				Scientific notation
+	g				Floating point OR scientific, whichever is shorter
+	c				Single character
+	s				ANSI string
+	su				Unicode string
+	hr				HRESULT or Win32 error code
+	wc				Windows class flag
+	wm				Windows message number
+
+
+	You can also put a pointer in the watch window and have it show a memory dump in a specific format.
+	For example, "0xabcdef,ma" would show 64 ASCII characters at 0xabcdef.
+
+	Symbol			Format Description
+	------          ------------------
+	
+	ma				64 ASCII characters
+	m				16 bytes in hex format followed by 16 ASCII characters
+	mw				8 words
+	md				4 doublewords
+	mq				4 quadwords
+	mu				2-byte characters (Unicode)
+	#				Expand an array to the specified number of values (pArray,10)
+
+	
+	Note: There is a way to add your own custom expansions for types into the debugger by making
+	a DLL that converts the type's data into a string. They're called "Expression Evaluator Add-Ins".
+	This may only be supported in .NET.
+	
+
+------- Avoiding Stepping Into Things ------- 
+	
+	It's often useful to avoid stepping into some common code like constructors or overloaded 
+	operators. autoexp.dat provides this capability. Add a section called "[ExecutionControl]". 
+	Add keys where the key is the function name and the value is "NoStepInto". You can specify 
+	an asterisk (*) as a wildcard as the first set of colons for a namespace or class. 
+	
+	autoexp.dat is only read on Visual Studio's start up. 
+
+	To ignore the function myfunctionname, and all calls to the class CFoo: 
+		[ExecutionControl] 
+		myfunctionname=NoStepInto CFoo::*=NoStepInto 
+	
+	To ignore construction and assignment of MFC CStrings: (Notice the extra = in CString::operator=.) 
+		[ExecutionControl] 
+		CString::CString=NoStepInto CString::operator==NoStepInto 
+
+	To ignore all ATL calls: 
+		[ExecutionControl] 
+		ATL::*=NoStepInto 
+
+
+
+------- Syntax Highlighting For New File Extensions ------- 
+
+To get syntax highlighting for new file extensions, open RegEdit and go to
+HKEY_CURRENT_USER\Software\Microsoft\Devstudio\6.0\Text Editor\Tabs/Language Settings.
+Pick the closest language under there and add your extension to its FileExtensions key.
+For example, you would add PHP files to HTML/FileExtensions since they are essentially
+HTML files.

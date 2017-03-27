@@ -1,0 +1,26 @@
+ps.1.1
+
+;------------------------------------------------------------------------------
+; Draw a texture . . woo hoo!
+; t0 - texture
+;
+; The texture coordinates need to be defined as follows:
+; tc0 - texcoords
+;------------------------------------------------------------------------------
+
+; Get the color from the texture
+tex t0
+
+mov r0, t0
+;dp3 r0, c0, r0
+mov r0, 1-r0
+mul r0, r0, r0
+mul r0, r0, r0
+mul r0, r0, r0
+;mul r0, c1, r0
+;mul_x2 r0, t0, v0
+;mov r0, v0
+;mul r0, t0, c0
+
+
+

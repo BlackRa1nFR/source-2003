@@ -1,0 +1,145 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "dxferes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_EXPORTOPTIONS DIALOG DISCARDABLE  0, 0, 176, 179
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Export Quake Map File"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,122,140,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,122,156,50,14
+    CTEXT           "QMapExp - Quake Map Exporter for 3DS MAX",IDC_STATIC,0,
+                    72,172,8
+    CTEXT           "(c) Copyright 1996 Phil Camp",IDC_STATIC,0,114,172,8
+    CTEXT           "phil@flametop.demon.co.uk",IDC_STATIC,0,123,172,8
+    GROUPBOX        "",IDC_STATIC,0,66,171,68
+    RTEXT           "Map Name",IDC_STATIC,1,7,68,13
+    EDITTEXT        IDC_MAPNAME,69,6,103,12,ES_AUTOHSCROLL
+    RTEXT           "Texture WAD",IDC_STATIC,1,28,68,13
+    EDITTEXT        IDC_WADNAME,69,28,103,12,ES_AUTOHSCROLL
+    CTEXT           "Version 1.04",IDC_STATIC,5,85,167,8
+    GROUPBOX        "World Type",IDC_STATIC,1,42,171,25
+    CONTROL         "Medievel",IDC_WT_MEDIEVAL,"Button",BS_AUTORADIOBUTTON,4,
+                    52,45,10
+    CONTROL         "Runic",IDC_WT_RUNIC,"Button",BS_AUTORADIOBUTTON,53,52,
+                    35,10
+    CONTROL         "Present",IDC_WT_PRESENT,"Button",BS_AUTORADIOBUTTON,92,
+                    52,40,10
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "dxferes.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_EXPORTOPTIONS, DIALOG
+    BEGIN
+        RIGHTMARGIN, 172
+        BOTTOMMARGIN, 170
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_QMAPEXP             "QMAPEXP"
+    IDS_NO_MATERIAL         "No Material"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_TH_SCENEEXPORT      "Scene Export"
+    IDS_TH_NODATATOEXPORT   "No data to export"
+    IDS_TH_CANTCREATE       "Can't create output file"
+    IDS_TH_WRITEERROR       "Write error on file"
+    IDS_TH_QUAKE            "Quake Map"
+    IDS_TH_QUAKEMAPFILE     "Quake MAP File"
+    IDS_TH_QMAPEXPORTDLL    "Quake MAP File Exporter"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_TH_PHIL_CAMP        "Phil Camp"
+    IDS_TH_COPYRIGHT_BW     "Copyright 1996 Phil Camp"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

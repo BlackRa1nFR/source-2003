@@ -1,0 +1,230 @@
+//	STATIC: "BASETEXTURE"			"0..1"
+//	STATIC: "DETAILTEXTURE"			"0..1"
+//	STATIC: "BUMPMAP"				"0..1"
+//	STATIC: "CUBEMAP"				"0..1"
+//	STATIC: "VERTEXCOLOR"			"0..1"
+//	STATIC: "ENVMAPMASK"			"0..1"
+//	STATIC: "BASEALPHAENVMAPMASK"	"0..1"
+//	STATIC: "SELFILLUM"				"0..1"
+//	STATIC: "NORMALMAPALPHAENVMAPMASK" "0..1"
+//	STATIC: "NEEDSALPHA"			"0..1"
+//	STATIC: "RENDERALPHAONLY"		"0..1"
+//	STATIC: "BLENDTWOBASE"			"0..1"
+//	STATIC: "BLENDSECONDBASEAFTER"	"0..1"
+//	DYNAMIC: "BLENDOUTPUT"		"0..1"
+
+//	SKIP: $DETAILTEXTURE && $BUMPMAP
+//	SKIP: $ENVMAPMASK && $BUMPMAP
+//	SKIP: $NORMALMAPALPHAENVMAPMASK && $BASEALPHAENVMAPMASK
+//	SKIP: $NORMALMAPALPHAENVMAPMASK && $ENVMAPMASK
+//	SKIP: $BASEALPHAENVMAPMASK && $ENVMAPMASK
+//	SKIP: $BASEALPHAENVMAPMASK && $SELFILLUM
+//	SKIP: $NEEDSALPHA && $RENDERALPHAONLY
+//  SKIP: $NORMALMAPALPHAENVMAPMASK && !$BUMPMAP
+//  SKIP: $SELFILLUM && !$BASETEXTURE
+//  SKIP: $BASEALPHAENVMAPMASK && !$BASETEXTURE
+//  SKIP: $BLENDTWOBASE && !$BASETEXTURE
+//  SKIP: $BLENDSECONDBASEAFTER && !$BASETEXTURE
+//  SKIP: $BLENDTWOBASE && !$BUMPMAP
+//  SKIP: $BLENDSECONDBASEAFTER && !$BUMPMAP
+//  SKIP: $BLENDTWOBASE && $BLENDSECONDBASEAFTER
+
+// FIXME: Need to be able to disable diffuse lighting . . no, just use unlitgeneric instead!
+// FIXME: Fix all texture transform gunk for detail, bump.
+// FIXME: need to figure out how to skip macro combinations that aren't useful, or at least
+// generate really short programs for them.
+
+#include "common_hdr.h"
+
+
+const HALF4 g_EnvmapTint					: register( c0 );
+const HALF3 g_EnvmapContrast				: register( c2 );
+const HALF3 g_EnvmapSaturation				: register( c3 );
+const HALF4 g_FresnelReflection			: register( c4 );
+const HALF4 g_OneMinusFresnelReflection	: register( c5 );
+const HALF  g_OverbrightFactor				: register( c6 );
+const HALF4 g_SelfIllumTint				: register( c7 );
+
+sampler BaseTextureSampler	: register( s0 );
+sampler LightmapSampler		: register( s1 );
+sampler EnvmapSampler		: register( s2 );
+sampler DetailSampler		: register( s3 );
+sampler BumpmapSampler		: register( s4 );
+sampler EnvmapMaskSampler	: register( s5 );
+sampler Base2TextureSampler	: register( s6 );
+
+// CENTROID: TEXCOORD2
+// CENTROID: TEXCOORD3
+
+struct PS_INPUT
+{
+	float4 baseTexCoord1And2		: TEXCOORD0;
+	// detail textures and bumpmaps are mutually exclusive so that we have enough texcoords.
+	float4 detailOrBumpAndEnvmapMaskTexCoord		: TEXCOORD1;
+	float4 lightmapTexCoord1And2	: TEXCOORD2;
+	float4 lightmapTexCoordBAnd3	: TEXCOORD3;
+	float3 worldVertToEyeVector		: TEXCOORD4;
+	float3x3 tangentSpace			: TEXCOORD5;	// and 6 and 7
+	float4 vertexColor				: COLOR;
+};
+
+HALF4 main( PS_INPUT i ) : COLOR
+{
+	bool bBaseTexture = BASETEXTURE ? true : false;
+	bool bDetailTexture = DETAILTEXTURE ? true : false;
+	bool bBumpmap = BUMPMAP ? true : false;
+	bool bCubemap = CUBEMAP ? true : false;
+	bool bVertexColor = VERTEXCOLOR ? true : false;
+	bool bEnvmapMask = ENVMAPMASK ? true : false;
+	bool bBaseAlphaEnvmapMask = BASEALPHAENVMAPMASK ? true : false;
+	bool bSelfIllum = SELFILLUM ? true : false;
+	bool bNormalMapAlphaEnvmapMask = NORMALMAPALPHAENVMAPMASK ? true : false;
+	bool bNeedsAlpha = NEEDSALPHA ? true : false;
+	bool bRenderLumOnly = RENDERALPHAONLY ? true : false;
+	bool bBlendTwoBase = BLENDTWOBASE ? true : false;
+	bool bBlendSecondBaseAfter = BLENDSECONDBASEAFTER ? true : false;
+	
+	// HACK!!! I need to fix this and all vmts that use it since it's screwed up in lightmappedgeneric_dx8.
+	if( bCubemap && bBumpmap )
+	{
+		bNormalMapAlphaEnvmapMask = true;
+	}
+
+	HALF4 normal = HALF4( 0.0f, 0.0f, 1.0f, 0.0f );
+
+	HALF3 albedo = HALF3( 1.0f, 1.0f, 1.0f );
+	HALF3 envmapMask = HALF3( 1.0f, 1.0f, 1.0f );
+	HALF  alpha = 1.0f;
+	HALF  selfIllumFactor = 1.0f;
+
+	HALF lightmapBlendFactor = 0;
+	HALF3 lightmapColor = HALF3( 0.0f, 0.0f, 0.0f );
+
+	if( !bBumpmap || bBlendSecondBaseAfter )
+	{
+		// converted from gamma space to linear space on read using srgbread
+		lightmapColor = DecompressHDRFromTexture( tex2D( LightmapSampler, i.lightmapTexCoordBAnd3.xy ) );
+	}
+
+	HALF3 diffuseLighting = HALF3( 0.0f, 0.0f, 0.0f );
+	if ( bBumpmap )
+	{
+		normal = GetNormal( BumpmapSampler, i.detailOrBumpAndEnvmapMaskTexCoord.xy );
+
+		if ( bNormalMapAlphaEnvmapMask )
+			envmapMask = normal.a;
+
+		float2 lightmapTexCoord1 = i.lightmapTexCoord1And2.xy;
+		float2 lightmapTexCoord2 = i.lightmapTexCoord1And2.zw;
+		float2 lightmapTexCoord3 = i.lightmapTexCoordBAnd3.zw;
+
+		HALF4 lightmapSample1 = tex2D( LightmapSampler, lightmapTexCoord1 );
+		HALF3 lightmapColor1 = DecompressHDRFromTexture( lightmapSample1 );
+		HALF3 lightmapColor2 = DecompressHDRFromTexture( tex2D( LightmapSampler, lightmapTexCoord2 ) );
+		HALF3 lightmapColor3 = DecompressHDRFromTexture( tex2D( LightmapSampler, lightmapTexCoord3 ) );
+
+		lightmapBlendFactor = lightmapSample1.a;
+
+		diffuseLighting.rgb = saturate( dot( normal, bumpBasis[0] ) ) * lightmapColor1.rgb +
+						      saturate( dot( normal, bumpBasis[1] ) ) * lightmapColor2.rgb +
+					          saturate( dot( normal, bumpBasis[2] ) ) * lightmapColor3.rgb;
+	}
+	else
+	{
+		diffuseLighting = lightmapColor;
+	}
+
+	if ( bBaseTexture )
+	{
+		// converted from gamma space to linear space on read using srgbread
+		HALF4 baseSample = tex2D( BaseTextureSampler, i.baseTexCoord1And2.xy );
+		HALF3 baseColor = baseSample.xyz;
+		HALF baseAlpha = baseSample.a;
+		if( bBlendTwoBase && bBumpmap )
+		{
+			HALF3 baseColor2 = tex2D( Base2TextureSampler, i.baseTexCoord1And2.xy );
+			baseColor = lerp( baseColor2, baseColor, lightmapBlendFactor );
+		}
+		albedo.rgb *= baseColor;
+		if ( !bBaseAlphaEnvmapMask && !bSelfIllum )
+			alpha = baseAlpha;
+		else if ( bBaseAlphaEnvmapMask )
+			envmapMask = 1.0f - baseAlpha; // this blows!
+		else
+			selfIllumFactor = baseAlpha;
+	}
+
+	if ( bDetailTexture )
+	{
+		// FIXME: Are detail textures always in linear space?
+		HALF4 detailColor = 2.0f * tex2D( DetailSampler, i.detailOrBumpAndEnvmapMaskTexCoord.xy );
+		albedo.rgb *= detailColor;
+	}
+
+	if ( bEnvmapMask )
+	{
+		envmapMask.rgb = tex2D( EnvmapMaskSampler, i.detailOrBumpAndEnvmapMaskTexCoord.zw ).xyz;	
+	}
+
+	// The vertex color contains the modulation color + vertex color combined
+	albedo.rgb *= i.vertexColor;
+	if ( bNeedsAlpha || bRenderLumOnly )
+	{
+		alpha *= i.vertexColor.a; // not sure about this one
+	}
+
+	if ( bSelfIllum )
+	{
+		HALF4 selfIllum = g_SelfIllumTint;
+		diffuseLighting = lerp( diffuseLighting, selfIllum, selfIllumFactor );
+	}
+
+	HALF3 specularLighting = HALF3( 0.0f, 0.0f, 0.0f );
+
+	if ( bCubemap )
+	{
+		float3 worldSpaceNormal = mul( normal, i.tangentSpace );
+		specularLighting = DecompressHDRFromTexture( EnvReflect( EnvmapSampler, worldSpaceNormal, i.worldVertToEyeVector,
+			g_FresnelReflection.xy ) );
+
+		specularLighting *= envmapMask;
+		specularLighting *= g_EnvmapTint;
+	}
+
+	HALF3 color = diffuseLighting * albedo + specularLighting;
+
+	if( bBlendSecondBaseAfter && bBumpmap )
+	{
+		HALF3 baseColor2 = tex2D( Base2TextureSampler, i.baseTexCoord1And2.zw );
+		HALF3 color2 = baseColor2 * lightmapColor;
+		color = lerp( color2, color, lightmapBlendFactor );
+	}
+
+	HALF4 outputColor;
+
+#if BLENDOUTPUT
+	outputColor = CompressHDRToRenderTarget( color );
+#else
+	outputColor = CompressHDRToTexture( color );
+#endif
+
+	if( bNeedsAlpha )
+	{
+		// Just your regular color and alpha
+		return HALF4( outputColor.rgb, alpha );
+	}
+	else
+	{
+		if( bRenderLumOnly )
+		{
+			// Don't care about color, just return alpha pre-multiplied by luminance
+			// FIXME!!!  What is supposed to be in alpha here?
+			return HALF4( 1.0f, 0.0f, 1.0f, alpha * outputColor.a );
+		}
+		else
+		{
+			// Don't care about alpha, return luminance in alpha channel
+			return outputColor;
+		}
+	}
+}

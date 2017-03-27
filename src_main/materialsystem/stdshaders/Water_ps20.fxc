@@ -1,0 +1,82 @@
+// STATIC: "REFLECT" "0..1"
+// STATIC: "REFRACT" "0..1"
+#include "common_ps_fxc.h"
+
+sampler RefractSampler	: register( s2 );
+sampler ReflectSampler	: register( s4 );
+sampler NormalSampler	: register( s3 );
+
+sampler NormalizeSampler : register( s6 );
+
+const HALF4 vRefractTint : register( c1 );
+const HALF4 vReflectTint : register( c4 );
+const float4  g_ReflectRefractScale : register( c5 ); // xy - reflect scale, zw - refract scale
+
+static const bool g_bReflect = REFLECT ? true : false;
+static const bool g_bRefract = REFRACT ? true : false;
+
+struct PS_INPUT
+{
+	float2 vBumpTexCoord			: TEXCOORD0;
+	HALF3 vTangentEyeVect		: TEXCOORD1;
+	float4 vReflectXY_vRefractYX : TEXCOORD2;
+	float  W                     : TEXCOORD3;
+};
+
+HALF4 main( PS_INPUT i ) : COLOR
+{
+	// Load normal and expand range
+	HALF4 vNormalSample = tex2D( NormalSampler, i.vBumpTexCoord );
+	HALF3 vNormal = vNormalSample * 2.0 - 1.0;
+
+	// Perform division by W only once
+	float ooW = 1.0f / i.W;
+
+	// Compute coordinates for sampling Reflection
+	float2 vReflectTexCoord;
+	float2 vRefractTexCoord;
+
+	// vectorize the dependent UV calculations (reflect = .xy, refract = .wz)
+#ifdef NV3X
+	float4 vDependentTexCoords = vNormal.xyxy * vNormalSample.a * g_ReflectRefractScale;
+#else
+	float4 vN;
+	vN.xy = vNormal.xy;
+	vN.w = vNormal.x;
+	vN.z = vNormal.y;
+	float4 vDependentTexCoords = vN * vNormalSample.a * g_ReflectRefractScale;
+#endif
+	vDependentTexCoords += ( i.vReflectXY_vRefractYX * ooW );
+	vReflectTexCoord = vDependentTexCoords.xy;
+	vRefractTexCoord = vDependentTexCoords.wz;
+
+	// Sample reflection and refraction
+	HALF4 vReflectColor = tex2D( ReflectSampler, vReflectTexCoord ) * vReflectTint;
+	HALF4 vRefractColor = tex2D( RefractSampler, vRefractTexCoord ) * vRefractTint;
+	
+	HALF3 vEyeVect;
+	vEyeVect = texCUBE( NormalizeSampler, i.vTangentEyeVect );
+	vEyeVect = vEyeVect * 2.0 - 1.0;
+
+	// Fresnel term
+	HALF fNdotV = saturate( dot( vEyeVect, vNormal ) );
+	HALF fFresnel = pow( 1.0 - fNdotV, 5 );
+
+	if( g_bReflect && g_bRefract )
+	{
+		return lerp( vRefractColor, vReflectColor, fFresnel );
+	}
+	else if( g_bReflect )
+	{
+		return vReflectColor;
+	}
+	else if( g_bRefract )
+	{
+		return vRefractColor;
+	}
+	else
+	{
+		return float4( 0.0f, 0.0f, 0.0f, 0.0f );
+	}
+}
+

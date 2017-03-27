@@ -1,0 +1,418 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif\r\n"
+    "#include ""res\\Status.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\Status.ico"
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "Status MFC Application\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "Status\0"
+            VALUE "LegalCopyright", "Copyright © 1998\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "Status.EXE\0"
+            VALUE "ProductName", "Status Application\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_STATUS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 515
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 356
+    END
+
+    IDD_LOADFILE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 307
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 159
+    END
+
+    IDD_OPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 290
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 80
+    END
+
+    IDD_EMAIL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 274
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 154
+    END
+
+    IDD_ADDEMAIL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 221
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 154
+    END
+
+    IDD_WARNDIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 229
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 125
+    END
+
+    IDD_SCHEDULERDIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 176
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 174
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_STATUS DIALOG DISCARDABLE  0, 0, 522, 363
+STYLE WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPSIBLINGS | 
+    WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Server and Mod Usage"
+MENU IDR_MENU
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Hour",IDC_HOUR,"Button",BS_AUTORADIOBUTTON | 
+                    BS_LEFTTEXT | BS_PUSHLIKE | WS_GROUP | WS_TABSTOP,7,216,
+                    70,8
+    CONTROL         "Day",IDC_DAY,"Button",BS_AUTORADIOBUTTON | BS_LEFTTEXT | 
+                    BS_PUSHLIKE | WS_GROUP,7,226,70,8
+    CONTROL         "Week",IDC_WEEK,"Button",BS_AUTORADIOBUTTON | 
+                    BS_LEFTTEXT | BS_PUSHLIKE | WS_GROUP,7,237,70,8
+    CONTROL         "Month",IDC_MONTH,"Button",BS_AUTORADIOBUTTON | 
+                    BS_LEFTTEXT | BS_PUSHLIKE | WS_GROUP,7,248,70,8
+    PUSHBUTTON      "Refresh Now",IDC_REFRESH,7,25,77,12
+    CONTROL         "Spin1",IDC_RATE,"msctls_updown32",UDS_ARROWKEYS,187,7,
+                    14,21
+    LTEXT           "",IDC_STAT_REQUEST,7,20,73,10
+    LTEXT           "",IDC_STATIC_RATE,173,204,123,14
+    LTEXT           "Peak Usage:",IDC_STATIC_PEAK,180,225,123,14
+    CONTROL         "Tree1",IDC_MODTREE,"SysTreeView32",TVS_HASBUTTONS | 
+                    TVS_HASLINES | TVS_LINESATROOT | TVS_FULLROWSELECT | 
+                    WS_BORDER | WS_TABSTOP,7,43,508,86
+    CONTROL         "Tree1",IDC_MODPEAK,"SysTreeView32",TVS_HASBUTTONS | 
+                    TVS_HASLINES | TVS_LINESATROOT | TVS_FULLROWSELECT | 
+                    WS_BORDER | WS_TABSTOP,7,133,508,86
+    PUSHBUTTON      "Send Email Report",IDC_EMAIL,90,25,77,12
+END
+
+IDD_LOADFILE DIALOG DISCARDABLE  0, 0, 314, 166
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Load Data File(s)"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Load data from ",IDC_LOADBYDATE,"Button",
+                    BS_AUTORADIOBUTTON,28,23,64,12
+    EDITTEXT        IDC_STARTDATE,96,22,82,13,ES_AUTOHSCROLL
+    EDITTEXT        IDC_ENDDATE,198,22,82,13,ES_AUTOHSCROLL
+    CONTROL         "Load from file(s)",IDC_LOADBYFILE,"Button",
+                    BS_AUTORADIOBUTTON,28,38,64,12
+    PUSHBUTTON      "Choose Files...",IDC_CHOOSEFILES,96,38,82,13
+    CONTROL         "Load all info",IDC_LOADALL,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,29,75,72,11
+    CONTROL         "Ignore MOD data",IDC_IGNOREMODS,"Button",
+                    BS_AUTORADIOBUTTON,29,89,72,11
+    CONTROL         "Ignore MODS with less than",IDC_USETHRESHOLD,"Button",
+                    BS_AUTORADIOBUTTON,29,103,103,11
+    EDITTEXT        IDC_THRESHOLD,136,101,40,14,ES_AUTOHSCROLL
+    CONTROL         "Load only data for MOD",IDC_SPECIFICMOD,"Button",
+                    BS_AUTORADIOBUTTON,29,118,90,11
+    EDITTEXT        IDC_MODNAME,123,117,95,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "Load",IDOK,201,145,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,257,145,50,14
+    LTEXT           "to",IDC_STATIC,184,24,13,10
+    GROUPBOX        "Data Source",IDC_STATIC,22,13,272,44
+    GROUPBOX        "Options",IDC_STATIC,21,63,272,77
+    LTEXT           "percent of the sample's players",IDC_STATIC,181,104,102,
+                    11
+    LTEXT           "(0) Files Selected",IDC_STATIC_NUMFILES,184,40,99,9
+END
+
+IDD_OPTIONS DIALOG DISCARDABLE  0, 0, 297, 87
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,240,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,240,25,50,14
+    LTEXT           "Max servers in graph:",IDC_STATIC,7,8,83,10
+    LTEXT           "Max players in graph:",IDC_STATIC,7,23,83,10
+    EDITTEXT        IDC_MAXSERVERS,101,7,94,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_MAXPLAYERS,101,21,94,12,ES_AUTOHSCROLL
+    LTEXT           "Days to keep in memory:",IDC_STATIC,7,37,83,10
+    LTEXT           "Master server IP address:",IDC_STATIC,7,51,83,10
+    EDITTEXT        IDC_DAYSINMEMORY,101,35,94,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_MASTERSERVER,101,49,94,12,ES_AUTOHSCROLL
+END
+
+IDD_EMAIL DIALOG DISCARDABLE  0, 0, 281, 161
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Email Updates"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,223,141,51,14
+    LISTBOX         IDC_EMAILLIST,7,20,209,134,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Recipients",IDC_STATIC,7,7,207,10
+    PUSHBUTTON      "Add",IDC_ADDEMAIL,221,21,53,14
+    PUSHBUTTON      "Remove",IDC_REMOVEEMAIL,222,38,52,14
+END
+
+IDD_ADDEMAIL DIALOG DISCARDABLE  0, 0, 228, 161
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add Recipient"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,171,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,171,24,50,14
+    EDITTEXT        IDC_EMAILADDRESS,7,20,151,13,ES_AUTOHSCROLL
+    LTEXT           "Email Addresss:",IDC_STATIC,7,7,154,10
+    LTEXT           "Send update every:",IDC_STATIC,7,41,74,10
+    EDITTEXT        IDC_MAGNITUDE,7,57,116,12,ES_AUTOHSCROLL
+    COMBOBOX        IDC_UNIT,129,57,92,97,CBS_DROPDOWN | WS_VSCROLL | 
+                    WS_TABSTOP
+END
+
+IDD_WARNDIALOG DIALOG DISCARDABLE  0, 0, 236, 132
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Warning levels"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,102,111,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,167,111,50,14
+    EDITTEXT        IDC_EDIT1,17,37,64,13,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT2,18,69,134,13,ES_AUTOHSCROLL
+    LTEXT           "Page when player numbers go below:",IDC_STATIC,18,26,
+                    153,8
+    LTEXT           "Send the page to:",IDC_STATIC,18,58,87,9
+END
+
+IDD_SCHEDULERDIALOG DIALOG DISCARDABLE  0, 0, 183, 181
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Scheduler"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,44,153,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,111,153,50,14
+    LISTBOX         IDC_TIMELIST,23,46,62,92,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "DateTimePicker1",IDC_DATETIMEPICKER1,"SysDateTimePick32",
+                    DTS_RIGHTALIGN | DTS_UPDOWN | WS_TABSTOP | 0x8,23,21,57,
+                    14
+    PUSHBUTTON      "&Add Time",IDC_ADDTIME,102,20,62,14
+    PUSHBUTTON      "&Delete Time",IDC_DELTIME,103,47,59,13
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open...\tCtrl+O",            IDC_FILELOAD
+        MENUITEM "Close archived",              IDC_CLOSEARCHIVED
+        MENUITEM SEPARATOR
+        MENUITEM "&Quit\tCtrl+Q",               IDC_QUIT
+    END
+    POPUP "Info"
+    BEGIN
+        MENUITEM "&Memory usage",               IDM_MEMORY
+    END
+    POPUP "Tools"
+    BEGIN
+        MENUITEM "&Options...",                 IDM_OPTIONS
+        MENUITEM "Add email recipients...",     IDM_ADDEMAIL
+        MENUITEM "&Player levels Warning",      IDM_WARNDIALOG
+        MENUITEM "Schedule Reports",            IDD_SCHEDULER
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_ADDEMAIL DLGINIT
+BEGIN
+    IDC_UNIT, 0x403, 8, 0
+0x6573, 0x6f63, 0x646e, 0x0073, 
+    IDC_UNIT, 0x403, 8, 0
+0x696d, 0x756e, 0x6574, 0x0073, 
+    IDC_UNIT, 0x403, 6, 0
+0x6f68, 0x7275, 0x0073, 
+    IDC_UNIT, 0x403, 5, 0
+0x6164, 0x7379, "\000" 
+    IDC_UNIT, 0x403, 6, 0
+0x6577, 0x6b65, 0x0073, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDP_SOCKETS_INIT_FAILED "Windows sockets initialization failed."
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDC_FILELOAD            "Load saved history data from file..."
+    IDM_MEMORY              "Shows current memory usage statistics"
+    IDC_CLOSEARCHIVED       "Remove all data that has been saved to disk already..."
+    IDC_QUIT                "Shut down."
+    IDM_OPTIONS             "Choose program options..."
+    IDM_ADDEMAIL            "Add email recipients..."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif
+#include "res\Status.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

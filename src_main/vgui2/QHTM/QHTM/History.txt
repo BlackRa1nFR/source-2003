@@ -1,0 +1,120 @@
+Written by Russ Freeman Copyright ©1998-2001.
+Email: russf@gipsysoft.com
+Web site: http://www.gipsysoft.com/
+Last updated: <whatever the last change was>
+
+QHTM Change History
+-------------------
+
+1.53
+	29 Sept   2001	-	rjf	-	Removed call to RegisterWindow from DLL main and also fixed build issues with latest Platform SDK
+	16 August 2001	-	rjf	-	Added QHTM_RenderHTML and QHTM_GetHTMLHeight to enable HTML to be rendered onto HDC's
+	16 August 2001	-	rjf	-	Added QHTM_SetHTMLButton to enable HTML content on a pushbutton.
+	16 August 2001	-	rjf	-	Added QHTM_OPT_ENABLE_SCROLLBARS and QHTM_EnableScrollbars to enable/disable scroll bars on QHTM.
+
+1.52
+	05 August	2001	-	rjf	-	Fixed bug under win9x where some fonts widths were not calculated properly and this resulted in text being overwritten. The example showed this behaviour.
+	05 August	2001	-	rjf	-	Added "Windows-oem" and "gb2312" character set.
+	05 August	2001	-	rjf	-	Fixed bug where table row height was not working properly.
+
+1.51 - test released July 27th 2001
+	23 July		2001	-	rjf	-	QHTM now sends a WM_CTLCOLORSTATIC to it's parent.
+	23 July		2001	-	rjf	-	Fixed QHTM tooltips to also use the font and colours from the system.
+	23 July		2001	-	rjf	-	Fixed Cooltips to use the font and colours specified in the system by default.
+	23 July		2001	-	rjf	-	Changed control so it defaults the font to be whatever was sent to it using WM_SETFONT (must be before being assigned HTML).
+	23 July		2001	-	rjf	-	Fixed problem where TAB characters were being placed as-is when in PRE, replaced with 8 spaces in rendered HTML.
+	21 July		2001	-	rjf	-	Added option to get and set the default margins used by QHTM. QHTM_SetMargins and QHTM_OPT_MARGINS
+	21 July		2001	-	rjf	-	Added HTML MessageBox function; QHTM_MessageBox.
+	21 July		2001	-	rjf	-	Changed default table vertical alignment to be middle (just like it should).
+	21 July		2001	-	rjf	-	Added support for valign in tables. Added QHTM extension of valign in the <TABLE> tag to specify valign for an entire table.
+	21 July		2001	-	rjf	-	Added support for SUB and SUP.
+	21 July		2001	-	rjf	-	Fixed bug where some underline text objects weren't drawing properly
+	21 July		2001	-	rjf	-	Changed SetScrollPos to invalidate the window.
+	21 July		2001	-	rjf	-	Fixed various alignment and bogus paragraph problems.
+	20 July		2001	-	rjf	-	Fixed a bug in CoolTips that meant alt-tabbing around behaved badly.
+	20 July		2001	-	rjf	-	Improved performance by reducing the reallocation of memory, rescanning of strings and having only one buffer used for tokens in the parser/base parser.
+	20 July		2001	-	rjf	-	Added support for character sets (windows-1250 to windows-1257)
+	16 July		2001	-	rjf	-	Fixed bug where a font name that didn't exist in the system could be used. Now substitues the default font name (Times new roman).
+	16 July		2001	-	rjf	-	Fixed bug where the overhang on a space at the end of a token (text block) would cause the space to shrink!
+
+1.5		- Released July 15th 2001
+	11 July		2001	-	rjf	-	Added ability for the parser to extract comments and pass them on - maybe to process SSI statements like "#include".
+	11 July		2001	-	rjf	-	Added margin around aligned tables so text doesn't push up against the table.
+	11 July		2001	-	rjf	-	Added margin around aligned images so text doesn't push up against the image.
+	11 July		2001	-	rjf	-	Fixed bug in aligned(left, right) table layout where they effectively created new paragraphs, now text correctly wraps around them.
+	11 July		2001	-	rjf	-	changed default font name to "Times new roman"
+	10 July		2001	-	rjf	-	Many fixes in the table layout code due to caching of table measurements
+	10 July		2001	-	rjf	-	Fixed italics so text does not spill onto next character cells.
+	10 July		2001	-	rjf	-	changed default font size from 1 to 2
+	10 July		2001	-	rjf	-	Fixed QHTM heading styles to match those of IE.
+	10 July		2001	-	rjf	-	Fixed QHTM fonts sizes to closer resemble those of IE.
+	10 July		2001	-	rjf	-	Fixed bug where font point sizes were not working as designed.
+	7 July		2001	-	rjf	-	Joel Lucsy added the ability to comment out HTML; <!--comment-->
+	7 July		2001	-	rjf	-	Joel Lucsy added the ability to read bitmaps from resource stored as bitmaps. Reference them using SRC="RES:nID" where nID is the number associated with the bitmap.
+	7 July		2001	-	rjf	-	Added CODE - Renders in a fixed pitch font (courier new)
+	7 July		2001	-	rjf	-	Added CITE - Same as Italic 'I'
+	7 July		2001	-	rjf	-	Fixed a couple of problems in the UNICODE builds.
+	7 July		2001	-	rjf	-	Added ADDRESS - renders the same as BLOCKQUOTE but uses an Italic font.
+	7 July		2001	-	rjf	-	Fixed problem (reported by Paul Noble) with QHTM_GetTitle not returning the length of the title copied into the buffer (not including terminating Z)
+	7 July		2001	-	rjf	-	Added support for PRE and it's deprecated buddy XMP
+	7 July		2001	-	rjf	-	Added DEL element to be the same as STRIKE
+	6 July		2001	-	rjf	-	Changed internal structure of CSectionABC to make the control lighter and faster
+	6 July		2001	-	rjf	-	Fixed bug in thumb tracking when very large documents were loaded. 16bit problem.
+	6 July		2001	-	rjf	-	Fixed problem in the parser and renderer that displayed text after tables badly (extra space).
+	5 July		2001	-	rjf	-	Fixed nasty little flicker when giving new document to the control. This was caused
+													by resetting the scrolls to off and the switching them back on again.
+	5 July		2001	-	rjf	-	Fixed bug where (reported by Joel Lucsy)</p> wasn't working at all - it was being ignored.
+	5 July		2001	-	rjf	-	Added suggestion from Joel Lucsy to try for the hand cursor from the OS first and then fall back to a resource version.
+	5 July		2001	-	rjf	-	Added suggestion from Joel Lucsy to read GIF87a as well.
+	5 July		2001	-	rjf	-	Added suggestion from Joel Lucsy to read resource files from RT_HTML as well.
+	5 July		2001	-	rjf	-	Joel Lucsy added CENTER and DIV elements
+
+1.4
+	1 July		2001	-	rjf	-	Moved more defaults into the Defaults class and removed unused code from utils.h.
+	1 July		2001	-	rjf	-	Fixed bug with mailto URLs opening a new browser window that went nowhere.
+	30 June		2001	-	rjf	-	Removed unused code from CDrawContext.
+	30 June		2001	-	rjf	-	Fixed problem where a <p> was needed after a heading. It's not any more (but it doesn't hurt to).
+	30 June		2001	-	rjf	-	Added ability for control to be transparent. This does cause some flicker due to the fact that
+													it cannot use it's offscreen bitmap and enhanced scrolling ability to draw.
+	30 June		2001	-	rjf	-	Added ability to have a "light" build of the DLL.
+	30 June		2001	-	rjf	-	Fixed bug in strikethrough where ordered lists would not correctly pass the property around
+	28 June		2001	-	rjf	-	Added ability to statically link. This meant many small changes in structure for the code
+													which has resulted in a cleaner build system.
+	23 march	2001	-	rjf	-	Removed vertical text support from the CDrawContext.
+	23 march	2001	-	rjf	-	Added support for <strike>.
+	22 march	2001	-	rjf	-	Fixed bug where getting the title would cause a crash due to OBO error.
+	22 march	2001	-	rjf	-	Rewrote the timer handling to use the QHTM window rather than a seperate timer event window.
+
+
+1.3	May 13 1999
+	Fixed bug when changing styles in the control - it didn't redraw properly.
+	Fixed scroll bar bugs
+	Fixed bug where an image that is on the limit of moving onto the next line would be
+		moved *way* over to the right. Only happened in rare circumstances.
+	Fixed a couple of minor issues in printing.
+	Fixed image scaling problem when printing.
+	Added several new interfaces for printing.
+	Added ability to set the zoom level (via the set/get options).
+
+
+1.2	March 29 1999
+	Removed a lot of unused code.
+	Added the ability to jump to a named link within a single web page (QHTM_GOTO_LINK)
+	Fixed bug in initialisation of the control. It will now use the initial text from the
+		dialog resources as it's first text.
+	Added printing.
+	Added extra table support.
+	Added CoolTip interface
+	Many bug fixes and speedups throughout.
+
+
+1.1	February 5 1999
+	Added ability to switch on/off the CoolTips. This is via an options set.
+	Fixed a (crash) bug when linking to another document within the QHTM control.
+	Changed the callback mechanism for links. It now uses WM_NOTIFY rather than a registered
+		window message.
+	Fixed CoolTip so it no longer crashes when using explicit tags - it worked okay when using
+		&lt; and &gt;. Now it works properly.
+
+Bugs, suggestions etc. should be sent to russf@gipsysoft.com
+Please visit the web site http://www.gipsysoft.com/qhtm for updates and bug fixes.

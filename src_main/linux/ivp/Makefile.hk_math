@@ -1,0 +1,102 @@
+#
+# HK_Math library for HL
+#
+# June 2003, alfred@valvesoftware.com
+#
+
+SOURCE_DSP=../ivp/havana/havok/hk_math/hk_math.dsp
+HK_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok
+HK_MATH_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_math
+HK_MATH_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/hk_math
+
+HK_LCP_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_math/lcp
+HK_LCP_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/hk_math/lcp
+
+HK_INCR_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_math/incr_lu
+HK_INCR_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/hk_math/incr_lu
+
+HK_GAUSS_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_math/gauss_elimination
+HK_GAUSS_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/hk_math/gauss_elimination
+
+HK_QUATERNION_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_math/quaternion
+HK_QUATERNION_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/hk_math/quaternion
+
+HK_VECTOR3_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_math/vector3
+HK_VECTOR3_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/hk_math/vector3
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS) -D_LIB -DLINUX
+#CFLAGS+= -g -ggdb
+
+INCLUDEDIRS=-I.. -I$(HK_SRC_DIR) -I$(HK_LCP_SRC_DIR) -I$(HK_MATH_SRC_DIR) -I$(HK_QUATERNION_SRC_DIR) -I$(HK_GAUSS_SRC_DIR) -I$(HK_INCR_SRC_DIR) -I$(HK_VECTOR3_SRC_DIR)
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) -w $(CFLAGS) -o $@ -c $<
+
+#####################################################################
+
+HK_MATH = \
+	$(HK_MATH_OBJ_DIR)/densematrix.o \
+	$(HK_MATH_OBJ_DIR)/densematrix_util.o \
+	$(HK_MATH_OBJ_DIR)/eulerangles.o \
+	$(HK_MATH_OBJ_DIR)/math.o \
+	$(HK_MATH_OBJ_DIR)/matrix3.o \
+	$(HK_MATH_OBJ_DIR)/odesolve.o \
+	$(HK_MATH_OBJ_DIR)/plane.o \
+	$(HK_MATH_OBJ_DIR)/rotation.o \
+	$(HK_MATH_OBJ_DIR)/spatial_matrix.o \
+	$(HK_MATH_OBJ_DIR)/spatial_vector.o \
+	$(HK_MATH_OBJ_DIR)/transform.o
+
+HK_GAUSS = \
+	$(HK_GAUSS_OBJ_DIR)/gauss_elimination.o
+
+HK_INCR = \
+	$(HK_INCR_OBJ_DIR)/incr_lu.o
+
+HK_VECTOR3 = \
+	$(HK_VECTOR3_OBJ_DIR)/vector3.o \
+	$(HK_VECTOR3_OBJ_DIR)/vector3_util.o
+
+HK_LCP = \
+	$(HK_LCP_OBJ_DIR)/lcp_solver.o
+
+HK_QUATERNION = \
+	$(HK_QUATERNION_OBJ_DIR)/quaternion.o \
+	$(HK_QUATERNION_OBJ_DIR)/quaternion_util.o
+
+all: dirs hk_math_$(ARCH).$(LIBEXT)
+
+dirs:
+	-mkdir $(BUILD_OBJ_DIR)
+	-mkdir -p $(HK_BASE_OBJ_DIR)
+	-mkdir $(HK_MATH_OBJ_DIR)
+	-mkdir $(HK_GAUSS_OBJ_DIR)
+	-mkdir $(HK_LCP_OBJ_DIR)
+	-mkdir $(HK_INCR_OBJ_DIR)
+	-mkdir $(HK_VECTOR3_OBJ_DIR)
+	-mkdir $(HK_QUATERNION_OBJ_DIR)
+	$(CHECK_DSP) $(SOURCE_DSP)
+
+hk_math_$(ARCH).$(LIBEXT): $(HK_MATH) $(HK_GAUSS) $(HK_VECTOR3) $(HK_LCP) $(HK_INCR) $(HK_QUATERNION)
+	$(ARCMD) $@ $(HK_MATH) $(HK_GAUSS) $(HK_VECTOR3) $(HK_LCP) $(HK_INCR) $(HK_QUATERNION)
+
+$(HK_MATH_OBJ_DIR)/%.o: $(HK_MATH_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_GAUSS_OBJ_DIR)/%.o: $(HK_GAUSS_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_VECTOR3_OBJ_DIR)/%.o: $(HK_VECTOR3_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_LCP_OBJ_DIR)/%.o: $(HK_LCP_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_INCR_OBJ_DIR)/%.o: $(HK_INCR_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_QUATERNION_OBJ_DIR)/%.o: $(HK_QUATERNION_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+clean:
+	-rm -rf $(HK_BASE_OBJ_DIR)
+	-rm -f hk_math_$(ARCH).$(LIBEXT)

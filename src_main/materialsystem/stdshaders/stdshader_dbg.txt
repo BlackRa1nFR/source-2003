@@ -1,0 +1,39 @@
+//
+// FXC shaders
+//
+
+vertexlit_lighting_only_ps20.fxc
+
+VertexLit_and_unlit_Generic_vs20.fxc
+
+
+//
+// Vertex shaders
+//
+
+BumpmappedLightmap.vsh
+//DebugFBTexture.vsh
+DebugTangentSpace.vsh
+fillrate.vsh
+LightingOnly.vsh
+LightmappedGeneric_LightingOnly.vsh
+unlitgeneric.vsh
+UnlitGeneric_LightingOnly.vsh
+VertexLitGeneric_DiffBumpTimesBase.vsh
+
+//
+// Pixel shaders
+//
+
+BumpmappedLightmap_LightingOnly_OverBright1.psh
+BumpmappedLightmap_LightingOnly_OverBright2.psh
+//DebugFBTexture.psh
+fillrate.psh
+LightmappedGeneric_LightingOnly_Overbright1.psh
+LightmappedGeneric_LightingOnly_Overbright2.psh
+unlitgeneric.psh
+UnlitGeneric_NoTexture.psh
+VertexLitGeneric_DiffBumpLightingOnly_TwentyPercent_Overbright1.psh
+VertexLitGeneric_DiffBumpLightingOnly_TwentyPercent_Overbright2.psh
+vertexlitgeneric_lightingonly_overbright1.psh
+vertexlitgeneric_lightingonly_overbright2.psh

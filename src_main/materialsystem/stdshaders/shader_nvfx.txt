@@ -1,0 +1,17 @@
+hsv_ps20.fxc
+vertexlit_and_unlit_generic_vs20.fxc
+vertexlit_and_unlit_generic_ps20.fxc
+lightmappedgeneric_vs20.fxc
+lightmappedgeneric_ps20.fxc
+shadow_vs20.fxc
+shadow_ps20.fxc
+ShatteredGlass_ps20.fxc
+ShatteredGlass_vs20.fxc
+teeth_vs20.fxc
+Water_vs20.fxc
+Water_ps20.fxc
+screenspaceeffect_vs20.fxc
+Refract_vs20.fxc
+Refract_ps20.fxc
+WaterCheap_vs20.fxc
+WaterCheap_ps20.fxc

@@ -1,0 +1,51 @@
+#include "common_vs_fxc.h"
+
+struct VS_INPUT
+{
+	float4 vPos							: POSITION;
+	float3 vNormal						: NORMAL;
+	float2 vNormalMapCoord				: TEXCOORD0;
+	float3 vTangentS					: TANGENT;
+	float3 vTangentT					: BINORMAL;
+};
+
+struct VS_OUTPUT
+{
+    float4 projPos					: POSITION;	
+	float  fog						: FOG;
+	float2 normalMapTexCoord		: TEXCOORD0;
+	float3 worldVertToEyeVector		: TEXCOORD1;
+	float3x3 tangentSpaceTranspose	: TEXCOORD2;
+};
+
+const float4 cNormalMapTransform[2]			:  register( c90 );
+
+VS_OUTPUT main( const VS_INPUT v )
+{
+	VS_OUTPUT o = ( VS_OUTPUT )0;
+
+	float4 projPos;
+	float3 worldPos;
+
+	projPos = mul( v.vPos, cModelViewProj );
+	o.projPos = projPos;
+
+	worldPos = mul( v.vPos, cModel[0] );
+
+	float3 worldTangentS = mul( v.vTangentS, ( const float3x3 )cModel[0] );
+	float3 worldTangentT = mul( v.vTangentT, ( const float3x3 )cModel[0] );
+	float3 worldNormal = mul( v.vNormal, ( float3x3 )cModel[0] );
+	o.tangentSpaceTranspose[0] = worldTangentS;
+	o.tangentSpaceTranspose[1] = worldTangentT;
+	o.tangentSpaceTranspose[2] = worldNormal;
+	float3 worldVertToEyeVector = VSHADER_VECT_SCALE * (cEyePos - worldPos);
+	o.worldVertToEyeVector = worldVertToEyeVector;
+	// FIXME: need to add a normalMapTransform to all of the water shaders.
+	//o.normalMapTexCoord.x = dot( v.vNormalMapCoord, cNormalMapTransform[0] );
+	//o.normalMapTexCoord.y = dot( v.vNormalMapCoord, cNormalMapTransform[1] );
+	o.normalMapTexCoord = v.vNormalMapCoord;
+	o.fog = CalcFog( worldPos, projPos, FOGTYPE_RANGE );
+	return o;
+}
+
+

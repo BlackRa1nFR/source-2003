@@ -1,0 +1,140 @@
+//	STATIC: "LIGHT_COMBO"			"0..21"
+//	STATIC: "FOG_TYPE"				"0..1"
+//	STATIC: "NUM_BONES"				"0..3"
+//	STATIC: "BUMPMAP"				"0..1"
+//  STATIC: "VERTEXCOLOR"			"0..1"
+//	STATIC: "NORMALORTANGENTSPACE"			"0..1"
+
+//#define USE_CONDITIONALS
+
+#include "common_vs_fxc.h"
+
+static const int g_LightCombo		= LIGHT_COMBO;
+static const int g_FogType			= FOG_TYPE;
+#ifdef USE_CONDITIONALS
+const bool g_bZeroBones : register( b0 );
+const bool g_bOneBone   : register( b1 );
+const bool g_bTwoBones  : register( b2 );
+#else
+static const int g_NumBones			= NUM_BONES;
+#endif
+static const bool g_bBumpmap		 = BUMPMAP ? true : false;
+static const bool g_bVertexColor     = VERTEXCOLOR ? true : false;
+static const bool g_bNormalOrTangentSpace    = NORMALORTANGENTSPACE? true : false;
+
+static const int g_StaticLightType = g_StaticLightTypeArray[g_LightCombo];
+static const int g_AmbientLightType = g_AmbientLightTypeArray[g_LightCombo];
+static const int g_LocalLightType0 = g_LocalLightType0Array[g_LightCombo];
+static const int g_LocalLightType1 = g_LocalLightType1Array[g_LightCombo];
+
+const float4 cBaseTexCoordTransform[2]			:  register( c90 );
+const float4 cDetailOrBumpTexCoordTransform[2]	:  register( c92 );
+const float4 cEnvmapMaskTexCoordTransform[2]	:  register( c94 );
+
+struct VS_INPUT
+{
+	// This is all of the stuff that we ever use.
+	float4 vPos				: POSITION;
+	float4 vBoneWeights		: BLENDWEIGHT;
+	float4 vBoneIndices		: BLENDINDICES;
+	float3 vNormal			: NORMAL;
+	float4 vColor			: COLOR0;
+	float3 vSpecular		: COLOR1;
+	// make these float2's and stick the [n n 0 1] in the dot math.
+	float4 vTexCoord0		: TEXCOORD0;
+	float4 vTexCoord1		: TEXCOORD1;
+	float4 vTexCoord2		: TEXCOORD2;
+	float4 vTexCoord3		: TEXCOORD3;
+	float3 vTangentS		: TANGENT;
+	float3 vTangentT		: BINORMAL;
+	float4 vUserData		: TANGENT;
+};
+
+struct VS_OUTPUT
+{
+    float4 projPos					: POSITION;	
+	float  fog						: FOG;
+	float2 baseTexCoord				: TEXCOORD0;
+	// detail textures and bumpmaps are mutually exclusive so that we have enough texcoords.
+	float2 detailOrBumpTexCoord		: TEXCOORD1;
+	// bump mapping and a separate envmap mask texture are mutually exclusive.
+	float2 envmapMaskTexCoord		: TEXCOORD2;
+	float3 worldVertToEyeVector				: TEXCOORD3;
+	float3x3 tangentSpaceTranspose	: TEXCOORD4;
+	float4 color1					: COLOR0;
+	float3 color2					: COLOR1;
+	float3 color3					: TEXCOORD7;
+};
+
+VS_OUTPUT main( const VS_INPUT v )
+{
+	VS_OUTPUT o = ( VS_OUTPUT )0;
+
+	float3 worldNormal, worldPos, worldTangentS, worldTangentT;
+	SkinPositionNormalAndTangentSpace( 
+#ifdef USE_CONDITIONALS
+		g_bZeroBones, g_bOneBone, g_bTwoBones,
+#else
+		g_NumBones, 
+#endif
+		v.vPos, v.vNormal, v.vUserData,
+		v.vBoneWeights, v.vBoneIndices,
+		worldPos, worldNormal, worldTangentS, worldTangentT );
+
+	float4 projPos = mul( float4( worldPos, 1 ), cViewProj );
+	o.projPos = projPos;
+	o.fog = CalcFog( worldPos, projPos, g_FogType );
+	o.worldVertToEyeVector = VSHADER_VECT_SCALE * (cEyePos - worldPos);
+
+	if( g_bBumpmap )
+	{
+		// hack - need 3 baked lighting values for static props (vSpecular)
+		float3 tmpGammaColorNormal;
+		DoBumpedLighting( worldPos, worldNormal, worldTangentS, worldTangentT,
+			v.vSpecular, v.vSpecular, v.vSpecular, v.vSpecular,
+			g_StaticLightType, g_AmbientLightType, g_LocalLightType0, g_LocalLightType1, 1.0f,
+			o.color1.xyz, o.color2.xyz, o.color3.xyz, tmpGammaColorNormal );
+	}
+	else
+	{
+		o.color1.xyz = DoLighting( worldPos, worldNormal, v.vSpecular,
+			g_StaticLightType, g_AmbientLightType, g_LocalLightType0, g_LocalLightType1, 1.0f );
+	}
+
+	// Assume that this is unlitgeneric if you are using vertex color.
+	if( g_bVertexColor )
+	{
+		o.color1 = v.vColor;
+	}
+
+	o.baseTexCoord.x = dot( v.vTexCoord0, cBaseTexCoordTransform[0] );
+	o.baseTexCoord.y = dot( v.vTexCoord0, cBaseTexCoordTransform[1] );
+	o.detailOrBumpTexCoord.x = dot( v.vTexCoord0, cDetailOrBumpTexCoordTransform[0] );
+	o.detailOrBumpTexCoord.y = dot( v.vTexCoord0, cDetailOrBumpTexCoordTransform[1] );
+	o.envmapMaskTexCoord.x = dot( v.vTexCoord0, cEnvmapMaskTexCoordTransform[0] );
+	o.envmapMaskTexCoord.y = dot( v.vTexCoord0, cEnvmapMaskTexCoordTransform[1] );
+	if( g_bNormalOrTangentSpace )
+	{
+#ifdef NV3X
+		if ( g_bBumpmap )
+		{
+			o.tangentSpaceTranspose[0] = worldTangentS;
+			o.tangentSpaceTranspose[1] = worldTangentT;
+			o.tangentSpaceTranspose[2] = worldNormal;
+		}
+		else
+		{
+			o.tangentSpaceTranspose[0] = float3( worldTangentS.x, worldTangentT.x, worldNormal.x );
+			o.tangentSpaceTranspose[1] = float3( worldTangentS.y, worldTangentT.y, worldNormal.y );
+			o.tangentSpaceTranspose[2] = float3( worldTangentS.z, worldTangentT.z, worldNormal.z );
+		}  
+#else
+		o.tangentSpaceTranspose[0] = float3( worldTangentS.x, worldTangentT.x, worldNormal.x );
+		o.tangentSpaceTranspose[1] = float3( worldTangentS.y, worldTangentT.y, worldNormal.y );
+		o.tangentSpaceTranspose[2] = float3( worldTangentS.z, worldTangentT.z, worldNormal.z );
+#endif
+	}
+	return o;
+}
+
+

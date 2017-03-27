@@ -1,0 +1,20 @@
+ps.1.1
+
+tex t0 ; mid1
+tex t1 ; mid2
+tex t2 ; lightmap (optionally modulated by the macro)
+tex t3 ; micros
+
+
+mov_sat r0.rgb, t3					; r0 = lightmap * macro
+mov_sat r0.a, 1-v0
+
+lrp		r1, r0.a, t1, t0			; blend the midlevel textures
+mul		r0.rgb, r0, r1				; multiply by lightmap
+
+mov		r1.a, t3.b					; Blend the two micro textures (one in the blue channel and one in the alpha channel)
+lrp		r1.rgb, r0.a, r1.a, t3.a	
+mul_x2	r0.rgb, r0, r1				; multiply by lightmap
+
+mul_x4	r0.rgb, c0, r0				; * 2 * (overbrightFactor/2)
+

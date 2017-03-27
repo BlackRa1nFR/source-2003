@@ -1,0 +1,70 @@
+#
+# StudioRender library for HL
+#
+# June 2003, alfred@valvesoftware.com
+#
+
+SOURCE_DSP=../studiorender/studiorender.dsp
+STUDIO_SRC_DIR=$(SOURCE_DIR)/studiorender
+TIER0_PUBLIC_SRC_DIR=$(SOURCE_DIR)/public/tier0
+
+STUDIO_OBJ_DIR=$(BUILD_OBJ_DIR)/studio
+TIER0_OBJ_DIR=$(BUILD_OBJ_DIR)/studio/tier0
+PUBLIC_OBJ_DIR=$(BUILD_OBJ_DIR)/studio/public
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS)
+#CFLAGS+= -g -ggdb
+
+INCLUDEDIRS=-I$(PUBLIC_SRC_DIR) -I$(COMMON_SRC_DIR) -DIMAGE_LOADER_NO_DXTC -Dstrcmpi=strcasecmp  -D_alloca=alloca
+
+LDFLAGS= -lm -ldl tier0_$(ARCH).$(SHLIBEXT) vstdlib_$(ARCH).$(SHLIBEXT)
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) -w $(CFLAGS) -o $@ -c $<
+
+#####################################################################
+
+
+STUDIO_OBJS = \
+	$(STUDIO_OBJ_DIR)/cstudiorender.o \
+	$(STUDIO_OBJ_DIR)/flexrenderdata.o \
+	$(STUDIO_OBJ_DIR)/r_studio.o \
+	$(STUDIO_OBJ_DIR)/r_studiodecal.o \
+	$(STUDIO_OBJ_DIR)/r_studiodraw.o \
+	$(STUDIO_OBJ_DIR)/r_studioflex.o \
+	$(STUDIO_OBJ_DIR)/r_studiolight.o \
+	$(STUDIO_OBJ_DIR)/studiostats.o \
+
+TIER0_OBJS = \
+	$(TIER0_OBJ_DIR)/memoverride.o 
+
+PUBLIC_OBJS = \
+	$(PUBLIC_OBJ_DIR)/imageloader.o \
+	$(PUBLIC_OBJ_DIR)/interface.o \
+	$(PUBLIC_OBJ_DIR)/mathlib.o\
+	$(PUBLIC_OBJ_DIR)/utlbuffer.o \
+	$(PUBLIC_OBJ_DIR)/vmatrix.o \
+
+all: dirs studiorender_$(ARCH).$(SHLIBEXT)
+
+dirs:
+	-mkdir $(BUILD_OBJ_DIR)
+	-mkdir $(STUDIO_OBJ_DIR)
+	-mkdir $(PUBLIC_OBJ_DIR)
+	-mkdir $(TIER0_OBJ_DIR)
+	$(CHECK_DSP) $(SOURCE_DSP)
+
+studiorender_$(ARCH).$(SHLIBEXT): $(STUDIO_OBJS) $(TIER0_OBJS) $(PUBLIC_OBJS)
+	$(CPLUS) $(SHLIBLDFLAGS) -o $(BUILD_DIR)/$@ $(STUDIO_OBJS) $(TIER0_OBJS) $(PUBLIC_OBJS) $(LDFLAGS) $(CPP_LIB)
+
+$(STUDIO_OBJ_DIR)/%.o: $(STUDIO_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(TIER0_OBJ_DIR)/%.o: $(TIER0_PUBLIC_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(PUBLIC_OBJ_DIR)/%.o: $(PUBLIC_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+clean:
+	-rm -rf $(STUDIO_OBJ_DIR)
+	-rm -f studiorender_$(ARCH).$(SHLIBEXT)

@@ -1,0 +1,123 @@
+//	STATIC: "CUBEMAP"				"0..1"
+//	STATIC: "VERTEXCOLOR"			"0..1"
+//	STATIC: "ENVMAPMASK"			"0..1"
+//	STATIC: "BASEALPHAENVMAPMASK"	"0..1"
+//  STATIC: "AACLAMP" "0..1"
+
+#include "common_ps_fxc.h"
+
+const HALF4 g_EnvmapTint					: register( c0 );
+const HALF3 g_DiffuseModulation				: register( c1 );
+const HALF3 g_EnvmapContrast				: register( c2 );
+const HALF3 g_EnvmapSaturation				: register( c3 );
+const HALF4 g_FresnelReflection				: register( c4 );
+const HALF4 g_OneMinusFresnelReflection		: register( c5 );
+const HALF3 g_OverbrightFactor				: register( c6 );
+
+// CENTROID: TEXCOORD2
+
+sampler BaseTextureSampler	: register( s0 );
+sampler LightmapSampler		: register( s1 );
+sampler EnvmapSampler		: register( s2 );
+sampler DetailSampler		: register( s3 );
+sampler EnvmapMaskSampler	: register( s4 );
+
+sampler NormalizeSampler : register( s6 );
+
+struct PS_INPUT
+{
+	HALF2 baseTexCoord				: TEXCOORD0;
+	HALF2 detailTexCoord			: TEXCOORD1;
+	HALF2 lightmapTexCoord			: TEXCOORD2;
+	HALF2 envmapMaskTexCoord		: TEXCOORD3;
+	HALF3 eyeVector				: TEXCOORD4;
+	HALF3 worldSpaceNormal			: TEXCOORD5;
+#if (AACLAMP==1)
+  HALF4 lightmapSize_Offset : TEXCOORD6;
+#endif
+	HALF4 vertexColor				: COLOR;
+};
+
+HALF4 main( PS_INPUT i ) : COLOR
+{
+	bool bCubemap = CUBEMAP ? true : false;
+	bool bVertexColor = VERTEXCOLOR ? true : false;
+	bool bEnvmapMask = ENVMAPMASK ? true : false;
+	bool bBaseAlphaEnvmapMask = BASEALPHAENVMAPMASK ? true : false;
+
+	HALF4 baseColor = tex2D( BaseTextureSampler, i.baseTexCoord );
+	HALF4 detailColor = tex2D( DetailSampler, i.detailTexCoord );
+
+#if (AACLAMP==1)
+	HALF4 lmUV_0 = HALF4(i.lightmapTexCoord.xy, i.lightmapSize_Offset.xy);
+	HALF2 lightmapCoordinates = ComputeLightmapCoordinates( lmUV_0, i.lightmapSize_Offset.zw );
+#else
+  HALF2 lightmapCoordinates = i.lightmapTexCoord;
+#endif
+
+	HALF3 lightmapColor = tex2D( LightmapSampler, lightmapCoordinates );
+
+	HALF3 specularFactor = 1.0f;
+	
+	if( bEnvmapMask )
+	{
+		specularFactor *= tex2D( EnvmapMaskSampler, i.envmapMaskTexCoord ).xyz;	
+	}
+
+	if( bBaseAlphaEnvmapMask )
+	{
+		specularFactor *= 1.0 - baseColor.a; // this blows!
+	}
+
+	HALF3 diffuseLighting = lightmapColor;
+	diffuseLighting *= g_DiffuseModulation;
+	diffuseLighting *= g_OverbrightFactor.x;
+
+	HALF3 albedo = baseColor;
+	HALF alpha = 1.0f;
+
+	if( !bBaseAlphaEnvmapMask )
+	{
+		alpha *= baseColor.a;
+	}
+
+	albedo *= detailColor;
+	alpha *= detailColor.a;
+
+
+	// FIXME: seperate vertexcolor and vertexalpha?
+	// vertex alpha is ignored if vertexcolor isn't set. . need to check other version.
+	if( bVertexColor )
+	{
+		albedo *= i.vertexColor;
+		alpha *= i.vertexColor.a; // not sure about this one
+	}
+
+	HALF3 specularLighting = HALF3( 0.0f, 0.0f, 0.0f );
+	if( bCubemap )
+	{
+		HALF3 eyeVector;
+		eyeVector = texCUBE( NormalizeSampler, i.eyeVector );
+		eyeVector = eyeVector * 2.0 - 1.0;
+		HALF3 reflectVect = CalcReflectionVectorUnnormalized( i.worldSpaceNormal, eyeVector );
+
+		// Calc Fresnel factor
+		HALF fresnel = 1.0 - dot( i.worldSpaceNormal, eyeVector );
+		fresnel = pow( fresnel, 5.0 );
+		fresnel = fresnel * g_FresnelReflection.b + g_FresnelReflection.a;
+		
+		specularLighting = texCUBE( EnvmapSampler, reflectVect );
+		specularLighting *= specularFactor;
+		specularLighting *= g_EnvmapTint;
+		HALF3 specularLightingSquared = specularLighting * specularLighting;
+		specularLighting = lerp( specularLighting, specularLightingSquared, g_EnvmapContrast );
+		HALF3 greyScale = dot( specularLighting, HALF3( 1.0f / 3.0f, 1.0f / 3.0f, 1.0f / 3.0f ) );
+		specularLighting = lerp( greyScale, specularLighting, g_EnvmapSaturation );
+		specularLighting *= fresnel;
+	}
+
+	// Do it somewhat unlit
+	HALF3 result = albedo*(g_OverbrightFactor.z*diffuseLighting + g_OverbrightFactor.y) + specularLighting;
+	return HALF4( result, alpha );
+}
+

@@ -1,0 +1,255 @@
+//	STATIC: "BASETEXTURE"			"0..1"
+//	STATIC: "BRIGHTNESS"			"0..1"
+//	STATIC: "DETAILTEXTURE"			"0..1"
+//	STATIC: "BUMPMAP"				"0..1"
+//	STATIC: "CUBEMAP"				"0..1"
+//	STATIC: "DIFFUSELIGHTING"		"0..1"
+//	STATIC: "ENVMAPMASK"			"0..1"
+//	STATIC: "BASEALPHAENVMAPMASK"	"0..1"
+//	STATIC: "SELFILLUM"				"0..1"
+//	STATIC: "NORMALMAPALPHAENVMAPMASK" "0..1"
+//  STATIC: "VERTEXCOLOR"			"0..1"
+//  STATIC: "VERTEXALPHA"			"0..1"
+//	STATIC: "NEEDSALPHA"			"0..1" // GR
+//	STATIC: "RENDERALPHA"			"0..1" // GR
+//	DYNAMIC: "BLENDOUTPUT"		"0..1"
+
+// SKIP: $DETAILTEXTURE && $BUMPMAP
+// SKIP: $ENVMAPMASK && $BUMPMAP
+// SKIP: $NORMALMAPALPHAENVMAPMASK && $BASEALPHAENVMAPMASK
+// SKIP: $NORMALMAPALPHAENVMAPMASK && $ENVMAPMASK
+// SKIP: $BASEALPHAENVMAPMASK && $ENVMAPMASK
+// SKIP: $BASEALPHAENVMAPMASK && $SELFILLUM
+// SKIP: $NEEDSALPHA && $RENDERALPHA
+// SKIP: $NORMALMAPALPHAENVMAPMASK && !$BUMPMAP
+// SKIP: $SELFILLUM && !$BASETEXTURE
+// SKIP: $BRIGHTNESS && !$BASETEXTURE
+// SKIP: $BASEALPHAENVMAPMASK && !$BASETEXTURE
+// SKIP: $ENVMAPMASK && !$CUBEMAP
+// SKIP: $BASEALPHAENVMAPMASK && !$CUBEMAP
+// SKIP: $NORMALMAPALPHAENVMAPMASK && !$CUBEMAP
+// !$BLENDOUTPUT && ( $NEEDSALPHA || $RENDERALPHA )
+
+#include "common_hdr.h"
+
+const HALF4 g_EnvmapTint			: register( c0 );
+const HALF4 g_DiffuseModulation	: register( c1 );
+const HALF3 g_EnvmapContrast		: register( c2 );
+const HALF3 g_EnvmapSaturation		: register( c3 );
+const HALF4 g_OverbrightFactor		: register( c4 );
+const HALF4 g_SelfIllumTint		: register( c5 );
+const float4 cBaseTexCoordTransform[2]			:  register( c6 );
+const float4 cDetailOrBumpTexCoordTransform[2]	:  register( c8 );
+const float4 cEnvmapMaskTexCoordTransform[2]	:  register( c10 );
+
+
+sampler BaseTextureSampler	: register( s0 );
+sampler EnvmapSampler		: register( s1 );
+sampler DetailSampler		: register( s2 );
+sampler BumpmapSampler		: register( s3 );
+sampler EnvmapMaskSampler	: register( s4 );
+sampler BrightnessSampler	: register( s5 );
+
+struct PS_INPUT
+{
+	float2 texCoord				: TEXCOORD0;
+	float3 worldVertToEyeVector				: TEXCOORD3;
+	float3x3 tangentSpaceTranspose	: TEXCOORD4;
+	float4 color1					: TEXCOORD1; // color1.a is for translucency
+	float4 color2					: TEXCOORD2; // color2.a is for hdr.
+	float3 color3					: TEXCOORD7;
+};
+
+HALF4 main( PS_INPUT i ) : COLOR
+{
+	bool bBaseTexture = BASETEXTURE ? true : false;
+	bool bBrightnessTexture = BRIGHTNESS ? true : false;
+	bool bDetailTexture = DETAILTEXTURE ? true : false;
+	bool bBumpmap = BUMPMAP ? true : false;
+	bool bCubemap = CUBEMAP ? true : false;
+	bool bDiffuseLighting = DIFFUSELIGHTING ? true : false;
+	bool bEnvmapMask = ENVMAPMASK ? true : false;
+	bool bBaseAlphaEnvmapMask = BASEALPHAENVMAPMASK ? true : false;
+	bool bSelfIllum = SELFILLUM ? true : false;
+	bool bNormalMapAlphaEnvmapMask = NORMALMAPALPHAENVMAPMASK ? true : false;
+	bool bVertexColor = VERTEXCOLOR ? true : false;
+	bool bVertexAlpha = VERTEXALPHA ? true : false;
+	bool bNeedsAlpha = NEEDSALPHA ? true : false;
+	bool bRenderAlpha = RENDERALPHA ? true : false;
+
+	float2 baseTexCoord;
+	
+	// detail textures and bumpmaps are mutually exclusive so that we have enough texcoords.
+	float2 detailOrBumpTexCoord;
+
+	// bump mapping and a separate envmap mask texture are mutually exclusive.
+	float2 envmapMaskTexCoord;
+
+	baseTexCoord.x = dot( i.texCoord, cBaseTexCoordTransform[0] );
+	baseTexCoord.y = dot( i.texCoord, cBaseTexCoordTransform[1] );
+	detailOrBumpTexCoord.xy = baseTexCoord;
+	envmapMaskTexCoord.xy = baseTexCoord;
+/*
+	detailOrBumpTexCoord.x = dot( i.texCoord, cDetailOrBumpTexCoordTransform[0] );
+	detailOrBumpTexCoord.y = dot( i.texCoord, cDetailOrBumpTexCoordTransform[1] );
+	envmapMaskTexCoord.x = dot( i.texCoord, cEnvmapMaskTexCoordTransform[0] );
+	envmapMaskTexCoord.y = dot( i.texCoord, cEnvmapMaskTexCoordTransform[1] );
+*/
+	
+	// hack hack hack
+	// I need to fix this and all vmts that use it since it's screwed up in lightmappedgeneric_dx8.
+	if( bCubemap && bBumpmap )
+	{
+		bNormalMapAlphaEnvmapMask = true;
+	}
+
+	HALF4 baseSample = 0.0f;
+	HALF3 baseColor = HALF3( 1.0f, 1.0f, 1.0f );
+	if( bBaseTexture )
+	{
+		// convert from gamma to linear on sample
+		baseSample = tex2D( BaseTextureSampler, baseTexCoord );
+		baseColor = baseSample.rgb;
+	}
+
+#if 0
+	HALF brightnessColor = HALF( 0.0f );
+	if ( bBrightnessTexture && bRenderAlpha )
+	{
+		// Use the same texture coordinates + transform as the base texture for brightness
+		brightnessColor = tex2D( BrightnessSampler, i.baseTexCoord ).r;
+	}
+#endif
+
+	HALF3 detailColor = HALF3( 1.0f, 1.0f, 1.0f );
+	if( bDetailTexture )
+	{
+		detailColor = 2.0f * tex2D( DetailSampler, detailOrBumpTexCoord );
+	}
+
+	HALF3 specularFactor = 1.0f;
+	
+	HALF3 tangentSpaceNormal = HALF3( 0.0f, 0.0f, 1.0f );
+	HALF4 normalTexel = 1.0f;
+	if( bBumpmap )
+	{
+		normalTexel = tex2D( BumpmapSampler, detailOrBumpTexCoord );
+		if( bNormalMapAlphaEnvmapMask )
+		{
+			specularFactor *= normalTexel.a;
+		}
+		tangentSpaceNormal = 2.0f * normalTexel - 1.0f;
+	}
+	HALF4 envmapMaskTexel;
+	if( bEnvmapMask )
+	{
+		envmapMaskTexel = tex2D( EnvmapMaskSampler, envmapMaskTexCoord );
+		specularFactor.rgb *= envmapMaskTexel.xyz;	
+	}
+	if( bBaseAlphaEnvmapMask )
+	{
+		specularFactor *= 1.0f - baseSample.a; // this blows!
+	}
+
+	HALF3 diffuseLighting = HALF3( 1.0f, 1.0f, 1.0f );
+	if( bDiffuseLighting )
+	{
+		if( bBumpmap )
+		{
+			diffuseLighting.rgb = saturate( dot( tangentSpaceNormal, bumpBasis[0] ) ) * i.color1.rgb +
+							      saturate( dot( tangentSpaceNormal, bumpBasis[1] ) ) * i.color2.rgb +
+							      saturate( dot( tangentSpaceNormal, bumpBasis[2] ) ) * i.color3.rgb;
+		}
+		else
+		{
+			diffuseLighting.rgb = i.color1.rgb;
+		}
+	}
+	else
+	{
+//		diffuseLighting.a += brightnessColor;
+	}
+
+	HALF3 albedo = HALF3( 1.0f, 1.0f, 1.0f );
+	HALF alpha = 1.0f;
+	if( bBaseTexture )
+	{
+		albedo.rgb *= baseColor.rgb;
+		if( !bBaseAlphaEnvmapMask && !bSelfIllum )
+		{
+			alpha *= baseSample.a;
+		}
+	}
+
+	// If we only have specularity, assume that we want a black diffuse component, and
+	// get alpha from the envmapmask
+	if( !bBaseTexture && bCubemap )
+	{
+		diffuseLighting = HALF4( 0.0f, 0.0f, 0.0f, 0.0f );
+		if( bEnvmapMask )
+		{
+			alpha *= envmapMaskTexel.a;
+		}
+	}
+
+	// FIXME: This could be done per vertex!
+	diffuseLighting.rgb *= g_DiffuseModulation.rgb;
+	alpha *= g_DiffuseModulation.a;
+	
+	if( bVertexColor )
+	{
+		albedo.rgb *= i.color1.rgb;
+	}
+
+	if( bVertexAlpha )
+	{
+		alpha *= i.color1.a;
+	}
+	
+	if( bDetailTexture )
+	{
+		albedo.rgb *= detailColor;
+	}
+
+	HALF3 diffuseComponent = albedo * diffuseLighting;
+
+	if( bSelfIllum )
+	{
+		HALF3 selfIllumComponent;
+		selfIllumComponent.rgb = g_SelfIllumTint * albedo;
+		diffuseComponent = lerp( diffuseComponent, selfIllumComponent, baseSample.a );
+	}
+
+	HALF3 specularLighting = HALF3( 0.0f, 0.0f, 0.0f );
+	if( bCubemap )
+	{
+		float3 worldSpaceNormal = mul( i.tangentSpaceTranspose, tangentSpaceNormal );
+		float3 reflectVect = CalcReflectionVectorUnnormalized( worldSpaceNormal, i.worldVertToEyeVector );
+
+		specularLighting = DecompressHDRFromTexture( texCUBE( EnvmapSampler, reflectVect ) );
+
+		specularLighting *= specularFactor;
+		specularLighting *= g_EnvmapTint;
+	}
+
+	HALF3 color = diffuseComponent + specularLighting;
+
+	HALF4 outputColor;
+#if BLENDOUTPUT
+	outputColor = CompressHDRToRenderTarget( color );
+#else
+	outputColor = CompressHDRToTexture( color );
+#endif
+	
+	if( bNeedsAlpha )
+	{
+		return HALF4( outputColor.rgb, alpha );
+	}
+	else
+	{
+		if( bRenderAlpha )
+			return HALF4( outputColor.rgb, outputColor.a * alpha );
+		else
+			return outputColor;
+	}
+}

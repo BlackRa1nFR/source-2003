@@ -1,0 +1,180 @@
+#
+# VSTDLib library for HL
+#
+# June 2003, alfred@valvesoftware.com
+#
+
+SOURCE_DSP=../ivp/ivp_workspaces_src/win32/ivp_physics_lib.dsp
+IVP_CONTROLLER_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_controller/
+IVP_CONTROLLER_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/ivp_controller/
+
+IVP_CONTROLLER_VALVE_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_controller/
+IVP_CONTROLLER_VALVE_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/ivp_controller/
+
+IVP_PHYSICS_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_collision
+IVP_PHYSICS_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/ivp_physics
+
+IVP_INTERN_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_intern
+IVP_INTERN_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/ivp_physics/ivp_intern
+
+IVP_UTILITY_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_utility
+IVP_UTILITY_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/ivp_physics/ivp_utility
+
+IVP_SURFACE_MANAGER_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_surface_manager
+IVP_SURFACE_MANAGER_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/ivp_physics/ivp_surface_manager
+
+IVP_PHYSICS_COL_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_physics
+IVP_PHYSICS_COL_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/ivp_physics/ivp_physics
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS) -D_LIB -DIVP_VERSION_SDK -DHAVANA_CONSTRAINTS -DHAVOK_MOOP -DLINUX
+
+#CFLAGS+= -g -ggdb
+
+INCLUDEDIRS=-I$(IVP_PHYSICS_SRC_DIR) -I$(IVP_UTILITY_SRC_DIR) -I$(IVP_SURFACE_MANAGER_SRC_DIR) -I$(IVP_PHYSICS_COL_SRC_DIR) -I$(IVP_INTERN_SRC_DIR) -I$(IVP_CONTROLLER_SRC_DIR) -I$(PUBLIC_SRC_DIR) -Dstrcmpi=strcasecmp
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) -w $(CFLAGS) -o $@ -c $<
+
+#####################################################################
+
+IVP_PHYSICS_OBJS = \
+	$(IVP_PHYSICS_OBJ_DIR)/ivp_3d_solver.o \
+	$(IVP_PHYSICS_OBJ_DIR)/ivp_clustering_longrange.o \
+	$(IVP_PHYSICS_OBJ_DIR)/ivp_clustering_lrange_hash.o \
+	$(IVP_PHYSICS_OBJ_DIR)/ivp_clustering_visual_hash.o \
+	$(IVP_PHYSICS_OBJ_DIR)/ivp_coll_del_root_mindist.o \
+	$(IVP_PHYSICS_OBJ_DIR)/ivp_collision_filter.o \
+	$(IVP_PHYSICS_OBJ_DIR)/ivp_compact_ledge.o \
+	$(IVP_PHYSICS_OBJ_DIR)/ivp_compact_ledge_solver.o \
+	$(IVP_PHYSICS_OBJ_DIR)/ivp_i_collision_vhash.o \
+	$(IVP_PHYSICS_OBJ_DIR)/ivp_mindist.o \
+	$(IVP_PHYSICS_OBJ_DIR)/ivp_mindist_debug.o \
+	$(IVP_PHYSICS_OBJ_DIR)/ivp_mindist_event.o \
+	$(IVP_PHYSICS_OBJ_DIR)/ivp_mindist_mcases.o \
+	$(IVP_PHYSICS_OBJ_DIR)/ivp_mindist_minimize.o \
+	$(IVP_PHYSICS_OBJ_DIR)/ivp_mindist_recursive.o \
+	$(IVP_PHYSICS_OBJ_DIR)/ivp_oo_watcher.o \
+	$(IVP_PHYSICS_OBJ_DIR)/ivp_range_manager.o \
+	$(IVP_PHYSICS_OBJ_DIR)/ivp_ray_solver.o \
+
+IVP_UTILITY = \
+	$(IVP_UTILITY_OBJ_DIR)/ivu_active_value.o \
+	$(IVP_UTILITY_OBJ_DIR)/ivu_bigvector.o \
+	$(IVP_UTILITY_OBJ_DIR)/ivu_geometry.o \
+	$(IVP_UTILITY_OBJ_DIR)/ivu_hash.o \
+	$(IVP_UTILITY_OBJ_DIR)/ivu_linear.o \
+	$(IVP_UTILITY_OBJ_DIR)/ivu_memory.o \
+	$(IVP_UTILITY_OBJ_DIR)/ivu_min_hash.o \
+	$(IVP_UTILITY_OBJ_DIR)/ivu_min_list.o \
+	$(IVP_UTILITY_OBJ_DIR)/ivu_os_dep.o \
+	$(IVP_UTILITY_OBJ_DIR)/ivu_quat.o \
+	$(IVP_UTILITY_OBJ_DIR)/ivu_string.o \
+	$(IVP_UTILITY_OBJ_DIR)/ivu_types.o \
+	$(IVP_UTILITY_OBJ_DIR)/ivu_vector.o \
+	$(IVP_UTILITY_OBJ_DIR)/ivu_vhash.o \
+
+IVP_INTERN = \
+	$(IVP_INTERN_OBJ_DIR)/ivp_ball.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_calc_next_psi_solver.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_controller_phantom.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_core.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_friction.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_friction_gaps.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_great_matrix.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_hull_manager.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_i_friction_hash.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_i_object_vhash.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_impact.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_merge_core.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_mindist_friction.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_object.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_object_attach.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_physic.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_physic_private.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_polygon.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_sim_unit.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_solver_core_reaction.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_time.o \
+	$(IVP_INTERN_OBJ_DIR)/ivp_environment.o \
+ 
+IVP_PHYSIC_COL = \
+	$(IVP_PHYSICS_COL_OBJ_DIR)/ivp_anomaly_manager.o \
+	$(IVP_PHYSICS_COL_OBJ_DIR)/ivp_betterdebugmanager.o \
+	$(IVP_PHYSICS_COL_OBJ_DIR)/ivp_betterstatisticsmanager.o \
+	$(IVP_PHYSICS_COL_OBJ_DIR)/ivp_cache_object.o \
+	$(IVP_PHYSICS_COL_OBJ_DIR)/ivp_liquid_surface_descript.o \
+	$(IVP_PHYSICS_COL_OBJ_DIR)/ivp_material.o \
+	$(IVP_PHYSICS_COL_OBJ_DIR)/ivp_performancecounter.o \
+	$(IVP_PHYSICS_COL_OBJ_DIR)/ivp_stat_manager_cback_con.o \
+	$(IVP_PHYSICS_COL_OBJ_DIR)/ivp_surface_manager.o \
+	$(IVP_PHYSICS_COL_OBJ_DIR)/ivp_templates.o \
+
+IVP_SURFACE_MANAGER = \
+	$(IVP_SURFACE_MANAGER_OBJ_DIR)/ivp_compact_surface.o \
+	$(IVP_SURFACE_MANAGER_OBJ_DIR)/ivp_gridbuild_array.o \
+	$(IVP_SURFACE_MANAGER_OBJ_DIR)/ivp_surman_grid.o \
+	$(IVP_SURFACE_MANAGER_OBJ_DIR)/ivp_surman_polygon.o \
+
+IVP_CONTROLLER = \
+	$(IVP_CONTROLLER_OBJ_DIR)/ivp_actuator.o \
+	$(IVP_CONTROLLER_OBJ_DIR)/ivp_actuator_spring.o \
+	$(IVP_CONTROLLER_OBJ_DIR)/ivp_buoyancy_solver.o \
+	$(IVP_CONTROLLER_OBJ_DIR)/ivp_car_system.o \
+	$(IVP_CONTROLLER_OBJ_DIR)/ivp_constraint.o \
+	$(IVP_CONTROLLER_OBJ_DIR)/ivp_constraint_car.o \
+	$(IVP_CONTROLLER_OBJ_DIR)/ivp_constraint_fixed_keyed.o \
+	$(IVP_CONTROLLER_OBJ_DIR)/ivp_constraint_local.o \
+	$(IVP_CONTROLLER_OBJ_DIR)/ivp_controller_buoyancy.o \
+	$(IVP_CONTROLLER_OBJ_DIR)/ivp_controller_floating.o \
+	$(IVP_CONTROLLER_OBJ_DIR)/ivp_controller_motion.o \
+	$(IVP_CONTROLLER_OBJ_DIR)/ivp_controller_raycast_car.o \
+	$(IVP_CONTROLLER_OBJ_DIR)/ivp_controller_stiff_spring.o \
+	$(IVP_CONTROLLER_OBJ_DIR)/ivp_controller_world_frict.o \
+	$(IVP_CONTROLLER_OBJ_DIR)/ivp_forcefield.o \
+	$(IVP_CONTROLLER_OBJ_DIR)/ivp_multidimensional_interp.o \
+	$(IVP_CONTROLLER_OBJ_DIR)/ivp_template_constraint.o \
+
+IVP_CONTROLLER_VALVE = \
+	$(IVP_CONTROLLER_VALVE_OBJ_DIR)/ivp_controller_airboat.o \
+
+
+all: dirs ivp_physics_$(ARCH).$(LIBEXT)
+
+dirs:
+	-mkdir $(BUILD_OBJ_DIR)
+	-mkdir -p $(IVP_PHYSICS_OBJ_DIR)
+	-mkdir $(IVP_INTERN_OBJ_DIR)
+	-mkdir $(IVP_UTILITY_OBJ_DIR)
+	-mkdir $(IVP_PHYSICS_COL_OBJ_DIR)
+	-mkdir $(IVP_SURFACE_MANAGER_OBJ_DIR)
+	-mkdir $(IVP_CONTROLLER_OBJ_DIR)
+	$(CHECK_DSP) $(SOURCE_DSP)
+
+ivp_physics_$(ARCH).$(LIBEXT): $(IVP_PHYSICS_OBJS)  $(IVP_UTILITY) $(IVP_INTERN) $(IVP_PHYSIC_COL) $(IVP_SURFACE_MANAGER) $(IVP_CONTROLLER) $(IVP_CONTROLLER_VALVE)
+	$(ARCMD) $@ $(IVP_PHYSICS_OBJS) $(IVP_UTILITY) $(IVP_CONTROLLER_VALVE) $(IVP_PHYSICS_COL) \
+	$(IVP_SURFACE_MANAGER) $(IVP_PHYSIC_COL) $(IVP_CONTROLLER) \
+	$(IVP_INTERN) $(IVP_CONTROLLER_VALVE) $(ARLDFLAGS)
+
+$(IVP_PHYSICS_OBJ_DIR)/%.o: $(IVP_PHYSICS_SRC_DIR)/%.cxx
+	$(DO_CC)
+
+$(IVP_INTERN_OBJ_DIR)/%.o: $(IVP_INTERN_SRC_DIR)/%.cxx
+	$(DO_CC)
+
+$(IVP_UTILITY_OBJ_DIR)/%.o: $(IVP_UTILITY_SRC_DIR)/%.cxx
+	$(DO_CC)
+
+$(IVP_PHYSICS_COL_OBJ_DIR)/%.o: $(IVP_PHYSICS_COL_SRC_DIR)/%.cxx
+	$(DO_CC)
+
+$(IVP_SURFACE_MANAGER_OBJ_DIR)/%.o: $(IVP_SURFACE_MANAGER_SRC_DIR)/%.cxx
+	$(DO_CC)
+
+$(IVP_CONTROLLER_OBJ_DIR)/%.o: $(IVP_CONTROLLER_SRC_DIR)/%.cxx
+	$(DO_CC)
+
+$(IVP_CONTROLLER_VALVE_OBJ_DIR)/%.o: $(IVP_CONTROLLER_VALVE_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+clean:
+	-rm -rf $(IVP_PHYSICS_OBJ_DIR)
+	-rm -f ivp_physics_$(ARCH).$(LIBEXT)

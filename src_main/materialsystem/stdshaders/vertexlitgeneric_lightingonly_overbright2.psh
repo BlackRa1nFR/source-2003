@@ -1,0 +1,9 @@
+;	"TEXKILL"			"0..1"
+ps.1.1
+
+#if TEXKILL
+texkill t3
+#endif
+mov r0, v0
+
+

@@ -1,0 +1,96 @@
+#
+# MaterialSystem library for HL
+#
+# June 2003, alfred@valvesoftware.com
+#
+
+SOURCE_DSP=../materialsystem/materialsystem.dsp
+SOURCE_SHADER_DSP=../shaderlib/shaderlib.dsp
+
+MAT_SRC_DIR=$(SOURCE_DIR)/materialsystem
+TIER0_PUBLIC_SRC_DIR=$(SOURCE_DIR)/public/tier0
+SHADER_SRC_DIR=$(SOURCE_DIR)/shaderlib
+
+MAT_OBJ_DIR=$(BUILD_OBJ_DIR)/materialsystem
+TIER0_OBJ_DIR=$(BUILD_OBJ_DIR)/materialsystem/tier0
+PUBLIC_OBJ_DIR=$(BUILD_OBJ_DIR)/materialsystem/public
+SHADER_OBJ_DIR=$(BUILD_OBJ_DIR)/materialsystem/shader
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS)
+DEBUG= -g -ggdb
+CFLAGS+= $(DEBUG)
+
+INCLUDEDIRS=-I$(PUBLIC_SRC_DIR) -I$(COMMON_SRC_DIR) -I. -DIMAGE_LOADER_NO_DXTC -Dstrcmpi=strcasecmp  -D_alloca=alloca
+
+LDFLAGS= -lm -ldl tier0_$(ARCH).$(SHLIBEXT) vstdlib_$(ARCH).$(SHLIBEXT) vtf_$(ARCH).$(LIBEXT)
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) -w $(CFLAGS) -o $@ -c $<
+
+#####################################################################
+
+MAT_OBJS = \
+	$(MAT_OBJ_DIR)/cmaterialsystem.o \
+	$(MAT_OBJ_DIR)/cmaterialvar.o \
+	$(MAT_OBJ_DIR)/materialsystem_global.o \
+	$(MAT_OBJ_DIR)/colorspace.o \
+	$(MAT_OBJ_DIR)/imagepacker.o \
+	$(MAT_OBJ_DIR)/texturemanager.o \
+	$(MAT_OBJ_DIR)/shadersystem.o \
+	$(MAT_OBJ_DIR)/ctexture.o \
+	$(MAT_OBJ_DIR)/cmaterial.o \
+	$(MAT_OBJ_DIR)/matrendertexture.o \
+
+TIER0_OBJS = \
+	$(TIER0_OBJ_DIR)/memoverride.o 
+
+PUBLIC_OBJS = \
+	$(PUBLIC_OBJ_DIR)/characterset.o \
+	$(PUBLIC_OBJ_DIR)/convar.o \
+	$(PUBLIC_OBJ_DIR)/filesystem_helpers.o \
+	$(PUBLIC_OBJ_DIR)/imageloader.o \
+	$(PUBLIC_OBJ_DIR)/interface.o \
+	$(PUBLIC_OBJ_DIR)/mathlib.o \
+	$(PUBLIC_OBJ_DIR)/mempool.o \
+	$(PUBLIC_OBJ_DIR)/resource_file.o \
+	$(PUBLIC_OBJ_DIR)/tgaloader.o \
+	$(PUBLIC_OBJ_DIR)/tgawriter.o \
+	$(PUBLIC_OBJ_DIR)/utlbuffer.o \
+	$(PUBLIC_OBJ_DIR)/utlsymbol.o \
+	$(PUBLIC_OBJ_DIR)/vmatrix.o \
+
+SHADER_OBJS = \
+	$(SHADER_OBJ_DIR)/shaderlib_cvar.o \
+	$(SHADER_OBJ_DIR)/ShaderDLL.o \
+	$(SHADER_OBJ_DIR)/BaseShader.o \
+	
+
+all: dirs materialsystem_$(ARCH).$(SHLIBEXT)
+
+dirs:
+	-mkdir $(BUILD_OBJ_DIR)
+	-mkdir $(MAT_OBJ_DIR)
+	-mkdir $(PUBLIC_OBJ_DIR)
+	-mkdir $(TIER0_OBJ_DIR)
+	-mkdir $(SHADER_OBJ_DIR)
+	$(CHECK_DSP) $(SOURCE_DSP)
+	$(CHECK_DSP) $(SOURCE_SHADER_DSP)
+
+materialsystem_$(ARCH).$(SHLIBEXT): $(MAT_OBJS) $(TIER0_OBJS) $(PUBLIC_OBJS) $(SHADER_OBJS)
+	$(CPLUS) $(SHLIBLDFLAGS) $(DEBUG) -o $(BUILD_DIR)/$@ $(MAT_OBJS) $(TIER0_OBJS) $(PUBLIC_OBJS) $(SHADER_OBJS) $(LDFLAGS) $(CPP_LIB) 
+
+$(MAT_OBJ_DIR)/%.o: $(MAT_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(TIER0_OBJ_DIR)/%.o: $(TIER0_PUBLIC_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(PUBLIC_OBJ_DIR)/%.o: $(PUBLIC_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(SHADER_OBJ_DIR)/%.o: $(SHADER_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+
+clean:
+	-rm -rf $(MAT_OBJ_DIR)
+	-rm -f materialsystem_$(ARCH).$(SHLIBEXT)

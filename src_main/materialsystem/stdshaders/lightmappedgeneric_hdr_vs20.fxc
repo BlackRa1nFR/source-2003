@@ -1,0 +1,113 @@
+//	STATIC: "FOG_TYPE"				"0..1"
+//	STATIC: "ENVMAP_MASK"			"0..1"
+//	STATIC: "TANGENTSPACE"			"0..1"
+//  STATIC: "BUMPMAP"				"0..1"
+//  STATIC: "VERTEXCOLOR"			"0..1"
+
+#include "common_vs_fxc.h"
+
+static const int g_FogType					= FOG_TYPE;
+static const bool g_UseSeparateEnvmapMask	= ENVMAP_MASK;
+static const bool g_bTangentSpace		= TANGENTSPACE;
+static const bool g_bBumpmap				= BUMPMAP;
+static const bool g_bVertexColor			= VERTEXCOLOR;
+
+const float4 cBaseTexCoordTransform[2]			:  register( c90 );
+const float4 cBaseTexCoordTransform2[2]			:  register( c96 ); // GR - Change ???
+const float4 cDetailOrBumpTexCoordTransform[2]	:  register( c92 );
+// This should be identity if we are bump mapping, otherwise we'll screw up the lightmapTexCoordOffset.
+const float4 cEnvmapMaskTexCoordTransform[2]	:  register( c94 );
+
+struct VS_INPUT
+{
+	float3 vPos							: POSITION;
+	float3 vNormal						: NORMAL;
+	float2 vBaseTexCoord				: TEXCOORD0;
+	float2 vLightmapTexCoord			: TEXCOORD1;
+	float2 vLightmapTexCoordOffset		: TEXCOORD2;
+	float3 vTangentS					: TANGENT;
+	float3 vTangentT					: BINORMAL;
+	float4 vColor						: COLOR0;
+};
+
+struct VS_OUTPUT
+{
+    float4 projPos					: POSITION;	
+	float  fog						: FOG;
+	float4 baseTexCoord1And2		: TEXCOORD0;
+	// detail textures and bumpmaps are mutually exclusive so that we have enough texcoords.
+	float4 detailOrBumpAndEnvmapMaskTexCoord		: TEXCOORD1;
+	float4 lightmapTexCoord1And2	: TEXCOORD2;
+	float4 lightmapTexCoordBAnd3	: TEXCOORD3;
+	float3 worldVertToEyeVector		: TEXCOORD4;
+	float3x3 tangentSpace			: TEXCOORD5;	// and 6 and 7
+	float4 vertexColor				: COLOR;
+};
+
+VS_OUTPUT main( const VS_INPUT v )
+{
+	VS_OUTPUT o = ( VS_OUTPUT )0;
+
+	float4 projPos;
+	float3 worldPos;
+
+	projPos = mul( float4( v.vPos, 1 ), cModelViewProj );
+	o.projPos = projPos;
+
+	worldPos = mul( float4( v.vPos, 1 ), cModel[0] );
+
+	if( g_bTangentSpace )
+	{
+		o.tangentSpace[0] = mul( v.vTangentS, ( const float3x3 )cModel[0] );
+		o.tangentSpace[1] = mul( v.vTangentT, ( const float3x3 )cModel[0] );
+		o.tangentSpace[2] = mul( v.vNormal,   ( const float3x3 )cModel[0] );
+	}
+
+	o.worldVertToEyeVector = cEyePos - worldPos;
+
+	o.baseTexCoord1And2.x = dot( v.vBaseTexCoord, cBaseTexCoordTransform[0] );
+	o.baseTexCoord1And2.y = dot( v.vBaseTexCoord, cBaseTexCoordTransform[1] );
+
+	o.baseTexCoord1And2.z = dot( v.vBaseTexCoord, cBaseTexCoordTransform2[0] );
+	o.baseTexCoord1And2.w = dot( v.vBaseTexCoord, cBaseTexCoordTransform2[1] );
+
+	o.detailOrBumpAndEnvmapMaskTexCoord.x = dot( v.vBaseTexCoord, cDetailOrBumpTexCoordTransform[0] );
+	o.detailOrBumpAndEnvmapMaskTexCoord.y = dot( v.vBaseTexCoord, cDetailOrBumpTexCoordTransform[1] );
+
+	o.lightmapTexCoordBAnd3.xy = v.vLightmapTexCoord;
+	if( g_bBumpmap )
+	{
+		o.lightmapTexCoord1And2.xy = v.vLightmapTexCoord + v.vLightmapTexCoordOffset;
+
+		float2 lightmapTexCoord2 = o.lightmapTexCoord1And2.xy + v.vLightmapTexCoordOffset;
+		float2 lightmapTexCoord3 = lightmapTexCoord2 + v.vLightmapTexCoordOffset;
+
+		o.lightmapTexCoord1And2.z = lightmapTexCoord2.x;
+		o.lightmapTexCoord1And2.w = lightmapTexCoord2.y;
+
+		o.lightmapTexCoordBAnd3.z = lightmapTexCoord3.x;
+		o.lightmapTexCoordBAnd3.w = lightmapTexCoord3.y;
+	}
+
+	if( g_UseSeparateEnvmapMask )
+	{
+		// reversed component order
+		o.detailOrBumpAndEnvmapMaskTexCoord.w = dot( v.vBaseTexCoord, cEnvmapMaskTexCoordTransform[0] );
+		o.detailOrBumpAndEnvmapMaskTexCoord.z = dot( v.vBaseTexCoord, cEnvmapMaskTexCoordTransform[1] );
+	}
+
+	o.fog = CalcFog( worldPos, projPos, g_FogType );
+
+	if (!g_bVertexColor)
+	{
+		o.vertexColor = cModulationColor;
+	}
+	else
+	{
+		o.vertexColor = v.vColor * cModulationColor;
+	}
+
+	return o;
+}
+
+

@@ -1,0 +1,183 @@
+#
+# HK_Constraints library for HL
+#
+# June 2003, alfred@valvesoftware.com
+#
+
+HK_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_physics/constraint
+HK_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/constraints
+
+HK_HAVOK_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok
+IVP_PHYSICS_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_physics
+IVP_UTILITY_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_utility
+IVP_CONTROLLER_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_controller
+
+HK_BALL_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_physics/constraint/ball_socket
+HK_BALL_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/constraints/ball_socket
+
+HK_LIMITED_BALL_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_physics/constraint/limited_ball_socket
+HK_LIMITED_BALL_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/constraints/limited_ball_socket
+
+HK_RAGDOLL_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_physics/constraint/ragdoll
+HK_RAGDOLL_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/constraints/ragdoll
+
+HK_HINGE_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_physics/constraint/hinge
+HK_HINGE_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/constraints/hinge
+
+HK_BREAKABLE_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_physics/constraint/breakable_constraint
+HK_BREAKABLE_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/constraints/breakable_constraint
+
+HK_FIXED_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_physics/constraint/fixed
+HK_FIXED_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/constraints/fixed
+
+HK_PRISMATIC_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_physics/constraint/prismatic
+HK_PRISMATIC_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/constraints/prismatic
+
+HK_PULLEY_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_physics/constraint/pulley
+HK_PULLEY_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/constraints/pulley
+
+HK_STIFF_SPRING_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok/hk_physics/constraint/stiff_spring
+HK_STIFF_SPRING_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/constraints/stiff_spring
+
+IVP_CONSTRAINTS_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_physics/hk_physics/constraint/local_constraint_system
+IVP_CONSTRAINTS_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/constraints/ivp_constraints
+
+IVP_CORE_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_physics/hk_physics/core
+IVP_CORE_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/constraints/ivp_core
+
+IVP_EFFECTOR_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_physics/hk_physics/effector
+IVP_EFFECTOR_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/constraints/ivp_effector
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS) -D_LIB -DLINUX -DHAVANA_CONSTRAINTS -DIVP_VERSION_SDK
+#CFLAGS+= -g -ggdb
+
+INCLUDEDIRS=-I$(IVP_CONTROLLER_SRC_DIR) -I$(IVP_PHYSICS_SRC_DIR) -I$(HK_SRC_DIR) \
+	-I$(HK_BALL_SRC_DIR) -I$(HK_LIMITED_BALL_SRC_DIR) \
+	-I$(HK_RAGDOLL_SRC_DIR) -I$(HK_HINGE_SRC_DIR) \
+	-I$(HK_BREAKABLE_SRC_DIR) -I$(HK_FIXED_SRC_DIR) \
+	-I$(HK_PRISMATIC_SRC_DIR) -I$(HK_PULLEY_SRC_DIR) \
+	-I$(HK_STIFF_SPRING_SRC_DIR) -I$(IVP_CONSTRAINTS_SRC_DIR) \
+	-I$(IVP_CORE_SRC_DIR) -I$(IVP_EFFECTOR_SRC_DIR) \
+	-I$(HK_HAVOK_SRC_DIR) -I$(IVP_UTILITY_SRC_DIR) 
+
+IVP_INCLUDEDIRS=-I$(IVP_CONSTRAINTS_SRC_DIR) -I$(IVP_CORE_SRC_DIR) \
+	-I$(IVP_EFFECTOR_SRC_DIR) -I$(IVP_PHYSICS_SRC_DIR) \
+	-I$(IVP_UTILITY_SRC_DIR) -I$(IVP_CONTROLLER_SRC_DIR) \
+	-I$(HK_BALL_SRC_DIR) -I$(HK_LIMITED_BALL_SRC_DIR) \
+	-I$(HK_RAGDOLL_SRC_DIR) -I$(HK_HINGE_SRC_DIR) \
+	-I$(HK_BREAKABLE_SRC_DIR) -I$(HK_FIXED_SRC_DIR) \
+	-I$(HK_PRISMATIC_SRC_DIR) -I$(HK_PULLEY_SRC_DIR) \
+	-I$(HK_STIFF_SPRING_SRC_DIR) -I$(HK_HAVOK_SRC_DIR) 
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) -w $(CFLAGS) -o $@ -c $<
+DO_IVP_CONSTRAINTS_CC=$(CPLUS) $(IVP_INCLUDEDIRS) -w $(CFLAGS) -o $@ -c $<
+
+#####################################################################
+
+HK_SRC = \
+	$(HK_OBJ_DIR)/constraint.o
+	
+HK_BALL = \
+	$(HK_BALL_OBJ_DIR)/ball_socket_constraint.o
+
+HK_HINGE = \
+	$(HK_HINGE_OBJ_DIR)/hinge_bp_builder.o \
+	$(HK_HINGE_OBJ_DIR)/hinge_constraint.o
+
+HK_LIMITED_BALL = \
+	$(HK_LIMITED_BALL_OBJ_DIR)/limited_ball_socket_constraint.o
+
+HK_RAGDOLL = \
+	$(HK_RAGDOLL_OBJ_DIR)/ragdoll_constraint.o \
+	$(HK_RAGDOLL_OBJ_DIR)/ragdoll_constraint_bp_builder.o
+
+HK_FIXED = \
+	$(HK_FIXED_OBJ_DIR)/fixed_constraint.o
+
+HK_PRISMATIC = \
+	$(HK_PRISMATIC_OBJ_DIR)/prismatic_constraint.o
+
+HK_PULLEY = \
+	$(HK_PULLEY_OBJ_DIR)/pulley_constraint.o
+
+HK_STIFF_SPRING = \
+	$(HK_STIFF_SPRING_OBJ_DIR)/stiff_spring_constraint.o
+
+HK_BREAKABLE = \
+	$(HK_BREAKABLE_OBJ_DIR)/breakable_constraint.o
+
+IVP_CORE = \
+	$(IVP_CORE_OBJ_DIR)/rigid_body_core.o
+
+IVP_EFFECTOR = \
+	$(IVP_EFFECTOR_OBJ_DIR)/rigid_body_binary_effector.o
+
+IVP_CONSTRAINTS = \
+	$(IVP_CONSTRAINTS_OBJ_DIR)/local_constraint_system.o
+
+all: dirs hk_constraints_$(ARCH).$(LIBEXT)
+
+dirs:
+	-mkdir $(BUILD_OBJ_DIR)
+	-mkdir -p $(HK_OBJ_DIR)
+	-mkdir $(HK_PULLEY_OBJ_DIR)
+	-mkdir $(HK_RAGDOLL_OBJ_DIR)
+	-mkdir $(IVP_CORE_OBJ_DIR)
+	-mkdir $(HK_STIFF_SPRING_OBJ_DIR)
+	-mkdir $(HK_BALL_OBJ_DIR)
+	-mkdir $(HK_STIFF_SPRING_OBJ_DIR)
+	-mkdir $(HK_HINGE_OBJ_DIR)
+	-mkdir $(HK_LIMITED_BALL_OBJ_DIR)
+	-mkdir $(HK_BREAKABLE_OBJ_DIR)
+	-mkdir $(HK_FIXED_OBJ_DIR)
+	-mkdir $(HK_PRISMATIC_OBJ_DIR)
+	-mkdir $(HK_PULLEY_OBJ_DIR)
+	-mkdir $(IVP_CONSTRAINTS_OBJ_DIR)
+	-mkdir $(IVP_EFFECTOR_OBJ_DIR)
+
+hk_constraints_$(ARCH).$(LIBEXT): $(HK_SRC) $(HK_BALL) $(HK_HINGE) $(HK_LIMITED_BALL) $(HK_RAGDOLL) $(HK_FIXED) $(HK_PRISMATIC) $(HK_PULLEY) $(HK_STIFF_SPRING) $(HK_BREAKABLE) $(IVP_CORE) $(IVP_EFFECTOR) $(IVP_CONSTRAINTS)
+	$(ARCMD) $@ $(ARLDFLAGS) $(HK_SRC) $(HK_BALL) $(HK_HINGE) $(HK_LIMITED_BALL) $(HK_RAGDOLL) $(HK_FIXED) $(HK_PRISMATIC) $(HK_PULLEY) $(HK_STIFF_SPRING) $(HK_BREAKABLE) $(IVP_CORE) $(IVP_EFFECTOR) $(IVP_CONSTRAINTS)
+
+$(HK_OBJ_DIR)/%.o: $(HK_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_BALL_OBJ_DIR)/%.o: $(HK_BALL_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_LIMITED_BALL_OBJ_DIR)/%.o: $(HK_LIMITED_BALL_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_RAGDOLL_OBJ_DIR)/%.o: $(HK_RAGDOLL_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_HINGE_OBJ_DIR)/%.o: $(HK_HINGE_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_BREAKABLE_OBJ_DIR)/%.o: $(HK_BREAKABLE_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_FIXED_OBJ_DIR)/%.o: $(HK_FIXED_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_PRISMATIC_OBJ_DIR)/%.o: $(HK_PRISMATIC_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_PULLEY_OBJ_DIR)/%.o: $(HK_PULLEY_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(HK_STIFF_SPRING_OBJ_DIR)/%.o: $(HK_STIFF_SPRING_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(IVP_CONSTRAINTS_OBJ_DIR)/%.o: $(IVP_CONSTRAINTS_SRC_DIR)/%.cpp
+	$(DO_IVP_CONSTRAINTS_CC)
+
+$(IVP_CORE_OBJ_DIR)/%.o: $(IVP_CORE_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(IVP_EFFECTOR_OBJ_DIR)/%.o: $(IVP_EFFECTOR_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+clean:
+	-rm -rf $(HK_OBJ_DIR)
+	-rm -f hk_constraints_$(ARCH).$(LIBEXT)
+

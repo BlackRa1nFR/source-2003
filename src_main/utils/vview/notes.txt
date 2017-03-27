@@ -1,0 +1,22 @@
+// -----------------------------------------------------------------
+// CHARLIE:
+//
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+NOTE: set DISP_PROTO to compile with displacement map info -- not on by default until
+      the prototype is done, the checked in .exe does not have displacement map functionality
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+surround all of the code with #ifdef DISP_PROTO until the prototyping is done
+DONE: add displacement tables to the bsp renderer
+DONE: render displacement faces wireframe
+DONE: render displacement faces flat
+DONE: render displacement faces textured
+write displacement faces to chain for continuous LOD
+add directory strings to displacement map loading functions
+DONE: update the face loading from .bsp function
+DONE: add displacement face loading from .bsp function
+DONE: add displacement map loading from .bsp function
+DONE: add displacement edge loading from .bsp function
+
+//------------------------------------------------------------------

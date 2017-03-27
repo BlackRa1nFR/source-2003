@@ -1,0 +1,8 @@
+ps.1.1
+
+tex t1
+
+mov_d2 r0.rgba, t1
+
+
+

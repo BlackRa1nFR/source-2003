@@ -1,0 +1,112 @@
+<body bgcolor=white>
+<a href="http://www.gipsysoft.com">
+	<img src="RES:logo.png" align="right" border=1>
+</a>
+<p align=center><b><font size="6">QHTM</font> <font size="6"><i> - Quick, Small and Light WIN32 HTML Control</font></i></b>
+<p>&nbsp;
+<p align=center><font size="3">QHTM is pretty flexible, if you can call Win32 from your programming language or tool then you can display HTML <i>FAST</i></font>
+
+<p align=center><b>You can use <i>File Open</i> to open any HTML file.</b>
+<p align=center>Also note the <b>CoolTips</b> in use in the toolbar, hover the mouse pointer over the "Refresh"&nbsp;<img src="RES:Refresh.png">&nbsp;button on the far right and you wil se the <b>CoolTip</b> in action.
+<p align=center>Or for a dramatic example of a <b>CoolTip</b> see the "About"&nbsp; <img src="RES:About.png">&nbsp;toolbar tooltip.
+
+<p align=center>You can use QHTM as a simple interface too: <a href="open">File|Open</a> to open a file, or <a href="about">Help|About</a> to show the about box.<br>
+And of course you can print <a href="print">File|Print</a>.
+
+<H1>Table Support</H1>
+<p>Here is a simple table in which no widths are specified. Note the default is no border</P>
+<table>
+	<tr>
+		<td>Row 1, Column 1 text</td>
+		<td>Row 1, Column 2 text</td>
+		<td>Row 1, Column 3 text</td>
+	</tr>
+	<tr>
+		<td>R 2, C 1</td>
+		<td>R 2, C 2</td>
+		<td>R 2, C 3</td>
+	</tr>
+	<tr>
+		<td>x</td>
+		<td><b>y</b></td>
+		<td>z</td>
+	</tr>
+</table>
+
+<p>Here is the same table with the border set to 1</p>
+<table border="1">
+	<tr>
+		<td>Row 1, Column 1 text</td>
+		<td>Row 1, Column 2 text</td>
+		<td>Row 1, Column 3 text</td>
+	</tr>
+	<tr>
+		<td>R 2, C 1</td>
+		<td>R 2, C 2</td>
+		<td>R 2, C 3</td>
+	</tr>
+	<tr>
+		<td>x</td>
+		<td><b>y</b></td>
+		<td>z</td>
+	</tr>
+</table>
+
+<p>Here is the same table with the width set to 100%</p>
+<table border="1" width="100%">
+	<tr>
+		<td>Row 1, Column 1 text</td>
+		<td>Row 1, Column 2 text</td>
+		<td>Row 1, Column 3 text</td>
+	</tr>
+	<tr>
+		<td>R 2, C 1</td>
+		<td>R 2, C 2</td>
+		<td>R 2, C 3</td>
+	</tr>
+	<tr>
+		<td>x</td>
+		<td><b>y</b></td>
+		<td>z</td>
+	</tr>
+</table>
+
+
+<p align="center">This table demonstrates NOWRAP and Cell Coloring</P>
+<table border="1">
+	<tr>
+		<td bgcolor="#FFFF00" align="center" ><p>Variable Cell</P></td>
+		<td nowrap bgcolor="#FFFFFF" align="center">Non-Wrapping Cell with some long text and a &lt;br&gt;<br>Next Line</td>
+		<td width="70" bgcolor="#FF8080" align="center">width = 75</td>
+	</tr>
+</table>
+
+
+<p>Same thing with a bigger border, black bgcolor, cellspacing = 3, and cellpadding = 4</P>
+<table align="center" border="4" cellpadding="4" cellspacing="3" bgcolor="#000000">
+	<tr>
+		<td bgcolor="#FFFF00">Variable Cell</td>
+		<td nowrap bgcolor="#FFFFFF" align="left">Non-Wrapping Cell with some long text and a &lt;br&gt;<br>Next Line</td>
+		<td width="70" bgcolor="#FF8080">width = 75</td>
+	</tr>
+</table>
+
+<p>Finally, here are some tables, nested 3 deep...</p>
+<table border="1" >
+	<tr><td>This table has one column, but the next  row has a table nested within.</td></tr>
+	<tr><td bgcolor="black">
+		<table bgcolor="white" width="50%" border="1" align="center">
+			<tr>
+				<td width="25%" align="center">One Quarter</td>
+				<td>
+					<table border="1" align="center">
+						<tr><td>C1</td><td>c2</td><td>c3</td></tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</td></tr>
+</table>
+
+
+</body>

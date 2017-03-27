@@ -1,0 +1,5 @@
+#include "tier0/dbg.h"
+#include "materialsystem/ishader.h"
+#include "shaderlib/shaderDLL.h"
+#include "fxctmp9\VertexLit_and_unlit_Generic_test_ps20.inc"
+#include "fxctmp9\VertexLit_and_unlit_Generic_test_vs20.inc"

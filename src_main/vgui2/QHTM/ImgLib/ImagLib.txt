@@ -1,0 +1,29 @@
+Written by Russell Freeman Copyright ©1998-1999.
+Email: russf@gipsysoft.com
+Web site: http://www.gipsysoft.com
+Last updated: June28, 1999. Version 0.01
+
+ImgLib was born because I needed a standard interface to various image formats, I also
+needed the ability to have multi-frame image capability. For multi-frame I chose MNG
+because it does not have any licencing issues as GIF does.
+
+MNG support is basic, it will handle MNG files as created by Paint Shop Pro 5. It will
+also cope with some of the reference images supplied by the MNG commitee. The latest MNG
+specification is available from http://www.hensa.ac.uk/png/mhome/spec. Because PSP5 is the
+only tool I coudl find that wrote MNG files and converted GIF to MNG I decided that this was
+the best source of MNG reference images. PSP5 does seem to deviate from the spec.
+
+PNG is supported by using the libpng library. Again, it's support is limited but quite functional.
+
+Other formats could be added very easily and ImgLib has been designed to be extended.
+
+To write this library I used several sources.
+
+The first was painlib by Ulrich von Zadow. The general layout of paintlib is nice and easily
+extended but it has a lot of MFC baggage that I don't need. paintlib also only has single
+frame capability.
+
+I also used ImageMagick by John Cristy, it's homepage is
+http://www.wizards.dupont.com/cristy/ImageMagick.html. I didn't compile this library but just
+read the code alongside the painlib code and the MNG spec. It helped a lot and for that I am
+greatful.

@@ -1,0 +1,230 @@
+//	STATIC: "NUM_BONES"				"0..3"
+//  STATIC: "MODEL"					"0..1"
+
+#include "common_vs_fxc.h"
+
+static const int g_NumBones			= NUM_BONES;
+static const bool g_bModel			= MODEL ? true : false;
+
+const float4 cBumpTexCoordTransform[2]	:  register( c91 );
+
+struct VS_INPUT
+{
+	float4 vPos							: POSITION;
+	float4 vBoneWeights					: BLENDWEIGHT;
+	float4 vBoneIndices					: BLENDINDICES;
+	float3 vNormal						: NORMAL;
+	float4 vBaseTexCoord				: TEXCOORD0;
+#if !MODEL
+	float3 vTangentS					: TANGENT;
+	float3 vTangentT					: BINORMAL0;
+#else
+	float4 vUserData					: TANGENT;
+#endif
+};
+
+struct VS_OUTPUT
+{
+    float4 vProjPos					: POSITION;	
+	float  vFog						: FOG;
+	float2 vBumpTexCoord			: TEXCOORD0;
+	float3 vTangentEyeVect			: TEXCOORD1;
+	float3x3 tangentSpaceTranspose	: TEXCOORD2;
+	float3 vRefractXYW				: TEXCOORD5;
+	float3 projNormal							: TEXCOORD6;
+};
+
+VS_OUTPUT main( const VS_INPUT v )
+{
+	VS_OUTPUT o = ( VS_OUTPUT )0;
+
+	float4 projPos;
+	float3 worldNormal, worldPos, worldTangentS, worldTangentT;
+#if MODEL
+	SkinPositionNormalAndTangentSpace( 
+#	ifdef USE_CONDITIONALS
+			g_bZeroBones, g_bOneBone, g_bTwoBones,
+#	else
+			g_NumBones, 
+#	endif
+			v.vPos, v.vNormal, v.vUserData,
+			v.vBoneWeights, v.vBoneIndices,
+			worldPos, worldNormal, worldTangentS, worldTangentT );
+#else
+	worldPos = mul( v.vPos, cModel[0] );
+	worldNormal = v.vNormal;
+	worldTangentS = mul( v.vTangentS, ( const float3x3 )cModel[0] );
+	worldTangentT = mul( v.vTangentT, ( const float3x3 )cModel[0] );
+	worldNormal = mul( v.vNormal, ( float3x3 )cModel[0] );
+#endif
+
+	// Projected position
+	float4 vProjPos = mul( float4( worldPos, 1 ), cViewProj );
+	o.vProjPos = vProjPos;
+	o.projNormal = mul( worldNormal, cViewProj );
+
+	// Map projected position to the refraction texture
+	float2 vRefractPos;
+	vRefractPos.x = vProjPos.x;
+	vRefractPos.y = -vProjPos.y; // invert Y
+	vRefractPos = (vRefractPos + vProjPos.w) * cHalf;
+
+	// Refraction transform
+	o.vRefractXYW = float3(vRefractPos.x, vRefractPos.y, vProjPos.w);
+
+	// Compute fog based on the position
+	float3 vWorldPos = mul( v.vPos, cModel[0] );
+	o.vFog = CalcFog( vWorldPos, vProjPos, FOGTYPE_RANGE );
+
+	// Eye vector
+	float3 vWorldEyeVect = cEyePos - vWorldPos;
+	// Transform to the tangent space
+	o.vTangentEyeVect.x = dot( vWorldEyeVect, worldTangentS );
+	o.vTangentEyeVect.y = dot( vWorldEyeVect, worldTangentT );
+	o.vTangentEyeVect.z = dot( vWorldEyeVect, worldNormal );
+
+	// Tranform bump coordinates
+	o.vBumpTexCoord.x = dot( v.vBaseTexCoord, cBumpTexCoordTransform[0] );
+	o.vBumpTexCoord.y = dot( v.vBaseTexCoord, cBumpTexCoordTransform[1] );
+
+#ifdef NV3X
+	o.tangentSpaceTranspose[0] = float3( worldTangentS.x, worldTangentT.x, worldNormal.x );
+	o.tangentSpaceTranspose[1] = float3( worldTangentS.y, worldTangentT.y, worldNormal.y );
+	o.tangentSpaceTranspose[2] = float3( worldTangentS.z, worldTangentT.z, worldNormal.z );
+#else
+	o.tangentSpaceTranspose[0] = worldTangentS;
+	o.tangentSpaceTranspose[1] = worldTangentT;
+	o.tangentSpaceTranspose[2] = worldNormal;
+#endif
+
+	return o;
+}
+
+
+/*
+#include "common_vs_fxc.h"
+
+#ifdef USE_CONDITIONALS
+const bool g_bZeroBones : register( b0 );
+const bool g_bOneBone   : register( b1 );
+const bool g_bTwoBones  : register( b2 );
+#else
+static const int g_NumBones			= NUM_BONES;
+static const bool g_bModel			= MODEL ? true : false;
+#endif
+
+const float4 cBumpTexCoordTransform[2]	:  register( c91 );
+const float4 g_C93 : register( c93 );
+const float4 g_C94 : register( c94 );
+
+struct VS_INPUT
+{
+	float4 vPos							: POSITION;
+	float4 vBoneWeights					: BLENDWEIGHT;
+	float4 vBoneIndices					: BLENDINDICES;
+	float3 vNormal						: NORMAL;
+	float4 vBaseTexCoord				: TEXCOORD0;
+#if !MODEL
+	float3 vTangentS					: TANGENT;
+	float3 vTangentT					: BINORMAL0;
+#else
+	float4 vUserData					: TANGENT;
+#endif
+};
+
+// t0: 
+//		texture: dudv map
+//		texcoords: coords for normal map
+// t1:
+//		texcoords: uvw for first dp3
+// t2:
+//		texture: renderable texture that we are going to perturb
+//		texcoords: uvw for second dp3
+
+struct VS_OUTPUT
+{
+    float4 projPos								: POSITION;	
+	float  fog									: FOG;
+	float2 dudvMapAndNormalMapTexCoord			: TEXCOORD0;
+	float4 uvw1									: TEXCOORD1;
+	float4 uvw2									: TEXCOORD2;
+	float3 projNormal							: TEXCOORD3;
+	float3 worldVertToEyeVector						: TEXCOORD4;
+	float3x3 tangentSpaceTranspose				: TEXCOORD5;
+};
+
+VS_OUTPUT main( const VS_INPUT v )
+{
+	VS_OUTPUT o;
+
+	float4 vProjPos;
+	float3 worldNormal, worldPos, worldTangentS, worldTangentT;
+#if MODEL
+	SkinPositionNormalAndTangentSpace( 
+#	ifdef USE_CONDITIONALS
+			g_bZeroBones, g_bOneBone, g_bTwoBones,
+#	else
+			g_NumBones, 
+#	endif
+			v.vPos, v.vNormal, v.vUserData,
+			v.vBoneWeights, v.vBoneIndices,
+			worldPos, worldNormal, worldTangentS, worldTangentT );
+#else
+	worldPos = mul( v.vPos, cModel[0] );
+	worldNormal = v.vNormal;
+	worldTangentS = mul( v.vTangentS, ( const float3x3 )cModel[0] );
+	worldTangentT = mul( v.vTangentT, ( const float3x3 )cModel[0] );
+	worldNormal = mul( v.vNormal, ( float3x3 )cModel[0] );
+#endif
+	projPos = mul( float4( worldPos, 1 ), cViewProj );
+	o.projNormal = mul( worldNormal, cViewProj );
+
+	o.projPos = projPos;
+
+	o.fog = CalcFog( worldPos, projPos, FOGTYPE_RANGE );
+
+	o.worldVertToEyeVector = VSHADER_VECT_SCALE * ( cEyePos - worldPos );
+
+	o.dudvMapAndNormalMapTexCoord.x = dot( v.vBaseTexCoord, cBumpTexCoordTransform[0] );
+	o.dudvMapAndNormalMapTexCoord.y = dot( v.vBaseTexCoord, cBumpTexCoordTransform[1] );
+
+	// special case perspective correct texture projection so that the texture fits exactly on the screen
+	projPos.y *= g_C94.w;
+	projPos.xy += projPos.w;
+	projPos.xy *= cHalf;
+
+	float w = projPos.w;
+	float oow = 1.0f/projPos.w;
+
+	float3 projTangentS;
+	projTangentS.xy = mul( worldTangentS, cViewProj ).xy;
+	projTangentS.z = 0.0f;
+
+	float3 projTangentT;
+	projTangentT.xy = mul( worldTangentT, cViewProj ).xy;
+	projTangentT.z = 0.0f;
+
+	// normalize these since we are going to shorten the displacements using mipmapping
+	// of the alpha channel of the normal map.
+//	projTangentS = normalize( projTangentS );
+//	projTangentT = normalize( projTangentT );
+	
+	o.uvw1.x = projTangentS.x * g_C93.x;
+	o.uvw1.y = projTangentT.x * g_C93.x;
+	o.uvw1.z = projPos.x;
+	o.uvw1.w = w;
+
+	o.uvw2.x = projTangentS.y * -g_C93.x;
+	o.uvw2.y = projTangentT.y * -g_C93.x;
+	o.uvw2.z = projPos.y;
+	o.uvw2.w = w;
+
+	o.tangentSpaceTranspose[0] = worldTangentS;
+	o.tangentSpaceTranspose[1] = worldTangentT;
+	o.tangentSpaceTranspose[2] = worldNormal;
+  
+	return o;
+}
+
+
+*/

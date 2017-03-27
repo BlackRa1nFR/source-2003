@@ -1,0 +1,136 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.K.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENG)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_TEST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 457
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 214
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_TEST DIALOGEX 0, 0, 464, 221
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "QHTM API Test Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_DEMO_LIST,7,7,74,207,LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "",IDC_HTML_DISPLAY,"QHTM_Window_Class_001",WS_TABSTOP,
+                    86,7,316,190,WS_EX_CLIENTEDGE
+    DEFPUSHBUTTON   "Close",IDOK,407,7,50,14
+    PUSHBUTTON      "&Print...",IDC_PRINT,407,24,50,14
+    PUSHBUTTON      "&Open...",IDC_OPEN,407,45,50,14
+    PUSHBUTTON      "&Refresh",IDC_REFRESH,407,66,50,14
+    PUSHBUTTON      "&View Source",IDC_VIEW_SOURCE,407,86,50,14
+    PUSHBUTTON      "MessageBox!",IDC_MESSAGEBOX,407,182,50,14
+    CONTROL         "Show border",IDC_BORDER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,113,204,56,10
+    CONTROL         "Make the control transparent",IDC_TRANSPARENT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,172,204,107,10
+    LTEXT           "&Text size:",IDC_STATIC,299,204,31,8,0,
+                    WS_EX_TRANSPARENT
+    COMBOBOX        IDC_ZOOM,332,202,48,71,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    PUSHBUTTON      "&Save as\n Bitmap",IDC_SAVE_AS_BITMAP,407,106,50,21,
+                    BS_MULTILINE
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_TIP_ID_OK           "This is the <b>close</b> button<br>It is used to close this dialog box and to save the data on the dialog back to the database."
+    IDS_TIP_ID_PRINT        "This is the <b>Print</b> button.<br>This will demonstrate how QHTM can be used from within a dialog box to print a non-trivial report. In this instance a few lines of code will print a couple of pages with headers and footers - <font color=""red"">all using HTML.</font>"
+    IDS_TIP_ID_DEMO_LIST    "This is a list of documents that this sample uses to demonstrate the HTML capabilities of <b>QHTM</b>\n<p>Select from the list and the corresponding HTML file will be loaded and displayed."
+    IDS_TIP_ID_OPEN         "This will open a HTML file from disk and display it within the QHTM window on the left."
+    IDS_TIP_ID_TRANSPARENT  "If the control is transparent then it uses the same background as below it. This can be useful if you have bitmap backgrounds or if you use the control as a method of displaying help/hint text on a dialog."
+    IDS_TIP_ID_BORDER       "Toggles the border. This shows how the control may look without a border. It clearly shows that the control fits very well within the dialog, making a superb enhanced static control."
+    IDS_TIP_ID_ZOOM         "Choose the text used used in QHTM."
+    IDS_MESSAGEBOX_TEXT     "<h4>QHTM_MessageBox()</h4>A drop in replacement for the MessageBox API with the exception<br>of displaying the full HTML that QHTM supports.<p>Not just <b>bold</b> or <u>underline</u>, <sup>superscript</sub> or <sub>subscript</sub><br>But the broad range of rich markup that QHTM displays.<p>Perhaps your messages could be more helpful:Resolution:<ol><li>If something doesn't fit force it</li><li>If whilst forcing it, it breaks</li><li>Replace it</li><li><a href=""http://www.gipsysoft.com/"">Click here</a> to get a new one</li></ol><h4>Perhaps display some data</h4><table border=1 width=30%><tr><td bgcolor=silver><b>Price</b></td><td bgcolor=silver><b>Volume</b></td></tr><tr><td><b>20.00</b></td><td><b>1,000</b></td></tr><tr><td><b>19.99</b></td><td><b>243</b></td></tr>"
+    IDS_TIP_ID_REFRESH      "Click to refresh the HTML displayed within the QHTM window."
+    IDS_TIP_ID_VIEW_SOURCE  "Click to view the HTML source for what's displayed in the QHTM window."
+    IDS_TIP_ID_MESSAGEBOX   "Click for a demo of a <b>big</b> HTML MessageBox"
+END
+
+#endif    // English (U.K.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

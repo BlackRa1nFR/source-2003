@@ -1,0 +1,86 @@
+#
+# ivp_compactbuilder library for HL
+#
+# June 2003, alfred@valvesoftware.com
+#
+
+SOURCE_DSP=../ivp/ivp_workspaces_src/win32/ivp_compactbuilder_lib.dsp
+IVP_SRC_DIR=$(SOURCE_DIR)/ivp/
+IVP_PHYSIC_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_physics
+IVP_SURFACE_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_surface_manager
+IVP_UTILITY_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_utility
+IVP_COLLISION_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_collision
+
+IVP_COMPACTBUILDER_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_compact_builder
+IVP_COMPACTBUILDER_OBJ_DIR=$(BUILD_OBJ_DIR)/ivp/ivp_compact_builder
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS) -D_LIB -DIVP_VERSION_SDK -DHAVOK_MOOP -DLINUX
+#CFLAGS+= -g -ggdb
+
+INCLUDEDIRS=-I$(IVP_SRC_DIR) -I$(IVP_COLLISION_SRC_DIR) -I$(IVP_UTILITY_SRC_DIR) -I$(IVP_SURFACE_SRC_DIR) -I$(IVP_PHYSIC_SRC_DIR) -I$(IVP_COMPACTBUILDER_SRC_DIR)
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) -w $(CFLAGS) -o $@ -c $<
+
+#####################################################################
+
+IVP_COMPACTBUILDER_OBJS = \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/ivp_compact_ledge_gen.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/ivp_compact_modify.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/ivp_compact_recursive.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/ivp_convex_decompositor.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/ivp_halfspacesoup.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/ivp_i_fpoint_vhash.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/ivp_i_point_vhash.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/ivp_object_polygon_tetra.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/ivp_rot_inertia_solver.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/ivp_surbuild_halfspacesoup.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/ivp_surbuild_ledge_soup.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/ivp_surbuild_pointsoup.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/ivp_surbuild_polygon_convex.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/ivp_surbuild_polyhdrn_cncv.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/ivp_surbuild_q12.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/ivp_templates_intern.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/ivp_tetra_intrude.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/ivv_cluster_min_hash.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/qhull.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/qhull_geom.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/qhull_geom2.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/qhull_global.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/qhull_io.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/qhull_mem.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/qhull_merge.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/qhull_poly.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/qhull_poly2.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/qhull_qset.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/qhull_stat.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/qhull_user.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/geompack_cutfac.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/geompack_cvdec3.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/geompack_drdec3.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/geompack_dsphdc.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/geompack_edght.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/geompack_initcb.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/geompack_insed3.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/geompack_insfac.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/geompack_insvr3.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/geompack_prime.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/geompack_ptpolg.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/geompack_resedg.o \
+	$(IVP_COMPACTBUILDER_OBJ_DIR)/3dsimport_co.o \
+
+all: dirs ivp_compactbuilder_$(ARCH).$(LIBEXT)
+
+dirs:
+	-mkdir $(BUILD_OBJ_DIR)
+	-mkdir -p $(IVP_COMPACTBUILDER_OBJ_DIR)
+	$(CHECK_DSP) $(SOURCE_DSP)
+
+ivp_compactbuilder_$(ARCH).$(LIBEXT): $(IVP_COMPACTBUILDER_OBJS)
+	$(ARCMD) $@ $(IVP_COMPACTBUILDER_OBJS)
+
+$(IVP_COMPACTBUILDER_OBJ_DIR)/%.o: $(IVP_COMPACTBUILDER_SRC_DIR)/%.cxx
+	$(DO_CC)
+
+clean:
+	-rm -rf $(IVP_COMPACTBUILDER_OBJ_DIR)
+	-rm -f ivp_compactbuilder_$(ARCH).$(LIBEXT)

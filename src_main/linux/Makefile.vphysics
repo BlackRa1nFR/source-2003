@@ -1,0 +1,103 @@
+#
+# Vphysics dll for HL
+#
+# July 2003, alfred@valvesoftware.com
+#
+
+SOURCE_DSP=$(SOURCE_DIR)/vphysics/vphysics.dsp
+
+PUBLIC_SRC_DIR=$(SOURCE_DIR)/public
+VPHYSICS_SRC_DIR=$(SOURCE_DIR)/vphysics
+
+VPHYSICS_OBJ_DIR=$(BUILD_OBJ_DIR)/vphysics
+PUBLIC_OBJ_DIR=$(BUILD_OBJ_DIR)/vphysics/public
+
+TIER0_OBJ_DIR=$(BUILD_OBJ_DIR)/vphysics/tier0
+TIER0_SRC_DIR=$(SOURCE_DIR)/public/tier0
+
+IVP_PHYSICS_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_physics
+IVP_INTERN_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_intern
+IVP_COLLISION_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_collision
+IVP_SURFACE_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_surface_manager
+IVP_UTILITY_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_utility
+IVP_CONTROLLER_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_controller
+IVP_COMPACT_SRC_DIR=$(SOURCE_DIR)/ivp/ivp_compact_builder
+HAVOK_SRC_DIR=$(SOURCE_DIR)/ivp/havana/havok
+HAVANA_SRC_DIR=$(SOURCE_DIR)/ivp/havana
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS) -UENABLE_IVP_MOPP
+#CFLAGS+= -g -ggdb
+
+INCLUDEDIRS=-I$(IVP_PHYSICS_SRC_DIR) -I$(IVP_SURFACE_SRC_DIR) -I$(IVP_COLLISION_SRC_DIR) -I$(IVP_INTERN_SRC_DIR) -I$(HAVANA_SRC_DIR) -I$(HAVOK_SRC_DIR) -I$(IVP_COMPACT_SRC_DIR) -I$(IVP_CONTROLLER_SRC_DIR) -I$(IVP_UTILITY_SRC_DIR) -I$(PUBLIC_SRC_DIR) -Dstrcmpi=strcasecmp
+
+LDFLAGS= -lm -ldl tier0_$(ARCH).$(SHLIBEXT) vstdlib_$(ARCH).$(SHLIBEXT) \
+	ivp_compactbuilder_$(ARCH).$(LIBEXT) \
+	ivp_physics_$(ARCH).$(LIBEXT) \
+	hk_constraints_$(ARCH).$(LIBEXT) \
+	hk_math_$(ARCH).$(LIBEXT) \
+	hk_base_$(ARCH).$(LIBEXT) \
+#	obj/ivp/hk_math/matrix3.o \
+#	obj/ivp/hk_math/vector3/vector3.o \
+#	obj/ivp/hk_math/densematrix_util.o \
+#	obj/ivp/ivp_physics/ivp_utility/ivu_linear.o \
+	
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) -w $(CFLAGS) -o $@ -c $<
+
+#####################################################################
+
+
+VPHYSICS_OBJS = \
+	$(VPHYSICS_OBJ_DIR)/physics_collide.o \
+	$(VPHYSICS_OBJ_DIR)/physics_constraint.o \
+	$(VPHYSICS_OBJ_DIR)/physics_controller_raycast_vehicle.o \
+	$(VPHYSICS_OBJ_DIR)/physics_environment.o \
+	$(VPHYSICS_OBJ_DIR)/physics_fluid.o \
+	$(VPHYSICS_OBJ_DIR)/physics_material.o \
+	$(VPHYSICS_OBJ_DIR)/physics_motioncontroller.o \
+	$(VPHYSICS_OBJ_DIR)/physics_object.o \
+	$(VPHYSICS_OBJ_DIR)/physics_shadow.o \
+	$(VPHYSICS_OBJ_DIR)/physics_spring.o \
+	$(VPHYSICS_OBJ_DIR)/physics_vehicle.o \
+	$(VPHYSICS_OBJ_DIR)/trace.o \
+	$(VPHYSICS_OBJ_DIR)/convert.o \
+	$(VPHYSICS_OBJ_DIR)/main.o \
+	$(VPHYSICS_OBJ_DIR)/vcollide_parse.o \
+	$(VPHYSICS_OBJ_DIR)/vphysics_saverestore.o \
+	$(VPHYSICS_OBJ_DIR)/physics_airboat.o \
+
+PUBLIC_OBJS = \
+	$(PUBLIC_OBJ_DIR)/characterset.o \
+	$(PUBLIC_OBJ_DIR)/filesystem_helpers.o \
+	$(PUBLIC_OBJ_DIR)/interface.o \
+	$(PUBLIC_OBJ_DIR)/utlsymbol.o \
+	$(PUBLIC_OBJ_DIR)/mathlib.o \
+	
+TIER0_OBJS = \
+	 $(TIER0_OBJ_DIR)/memoverride.o \
+
+all: dirs vphysics_$(ARCH).$(SHLIBEXT)
+
+dirs:
+	-mkdir $(BUILD_OBJ_DIR)
+	-mkdir $(VPHYSICS_OBJ_DIR)
+	-mkdir $(PUBLIC_OBJ_DIR)
+	-mkdir $(TIER0_OBJ_DIR)
+	$(CHECK_DSP) $(SOURCE_DSP)
+
+vphysics_$(ARCH).$(SHLIBEXT): $(VPHYSICS_OBJS) $(TIER0_OBJS) $(PUBLIC_OBJS)
+	$(CPLUS) $(SHLIBLDFLAGS) -o $(BUILD_DIR)/$@  $(VPHYSICS_OBJS) $(PUBLIC_OBJS) $(TIER0_OBJS) $(LDFLAGS) $(CPP_LIB) 
+
+$(VPHYSICS_OBJ_DIR)/%.o: $(VPHYSICS_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(PUBLIC_OBJ_DIR)/%.o: $(PUBLIC_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(TIER0_OBJ_DIR)/%.o: $(TIER0_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+clean:
+	-rm -rf $(VPHYSICS_OBJ_DIR)
+	-rm -f vphysics_$(ARCH).$(SHLIBEXT)
+

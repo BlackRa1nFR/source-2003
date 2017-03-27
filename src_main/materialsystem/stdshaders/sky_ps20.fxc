@@ -1,0 +1,16 @@
+#include "common_hdr.h"
+
+sampler BaseTextureSampler	: register( s0 );
+
+struct PS_INPUT
+{
+	float2 baseTexCoord				: TEXCOORD0;
+};
+
+HALF4 main( PS_INPUT i ) : COLOR
+{
+	HALF4 color = tex2D( BaseTextureSampler, i.baseTexCoord );
+//	return CompressHDR( DecompressHDR( color ) );
+	return color;
+}
+

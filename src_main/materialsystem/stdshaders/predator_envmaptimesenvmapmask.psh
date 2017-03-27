@@ -1,0 +1,10 @@
+ps.1.1
+
+; c2 - envmaptint
+
+tex t0	; cube map
+tex t1  ; envmapmask
+
+mul r0, t0, t1
+mul r0, r0, c2
+

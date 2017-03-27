@@ -1,0 +1,54 @@
+#
+# Dedicated Server wrapper for HL
+#
+# August 2003, alfred@valvesoftware.com
+#
+
+SOURCE_DSP=../dedicated/dedicated.dsp
+
+DEDICATED_SRC_DIR=$(SOURCE_DIR)/dedicated
+DEDICATED_OBJ_DIR=$(BUILD_OBJ_DIR)/dedicated
+PUBLIC_OBJ_DIR=$(BUILD_OBJ_DIR)/dedicated/public
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS)
+DEBUG = -g -ggdb
+CFLAGS+= $(DEBUG)
+
+INCLUDEDIRS=-I$(PUBLIC_SRC_DIR) -Dstrcmpi=strcasecmp
+LDFLAGS=-lm -ldl tier0_$(ARCH).$(SHLIBEXT) vstdlib_$(ARCH).$(SHLIBEXT)
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) -w $(CFLAGS) -o $@ -c $<
+
+#####################################################################
+
+DEDICATED_OBJS = \
+	$(DEDICATED_OBJ_DIR)/filesystem.o \
+	$(DEDICATED_OBJ_DIR)/launcher_int.o \
+	$(DEDICATED_OBJ_DIR)/sys_common.o \
+	$(DEDICATED_OBJ_DIR)/sys_linux.o \
+
+PUBLIC_OBJS = \
+	$(PUBLIC_OBJ_DIR)/checksum_md5.o \
+	$(PUBLIC_OBJ_DIR)/interface.o \
+	$(PUBLIC_OBJ_DIR)/mathlib.o \
+
+all: dirs hlds_$(ARCH)
+
+dirs:
+	-mkdir $(BUILD_OBJ_DIR)
+	-mkdir $(DEDICATED_OBJ_DIR)
+	-mkdir $(PUBLIC_OBJ_DIR)
+	$(CHECK_DSP) $(SOURCE_DSP)
+
+hlds_$(ARCH): $(DEDICATED_OBJS) $(PUBLIC_OBJS)
+	$(CPLUS) $(DEBUG) -o $(BUILD_DIR)/$@ $(DEDICATED_OBJS) $(PUBLIC_OBJS) $(CPP_LIB) $(LDFLAGS)
+
+$(DEDICATED_OBJ_DIR)/%.o: $(DEDICATED_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(PUBLIC_OBJ_DIR)/%.o: $(PUBLIC_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+clean:
+	-rm -rf $(DEDICATED_OBJ_DIR)
+	-rm -f hlds_$(ARCH)

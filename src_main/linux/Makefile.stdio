@@ -1,0 +1,63 @@
+#
+# Filesystem library for HL
+#
+# June 2003, alfred@valvesoftware.com
+#
+
+SOURCE_DSP=../filesystem/filesystem_stdio/filesystem_stdio.dsp
+FS_SRC_DIR=$(SOURCE_DIR)/filesystem/filesystem_stdio
+TIER0_PUBLIC_SRC_DIR=$(SOURCE_DIR)/public/tier0
+
+FS_OBJ_DIR=$(BUILD_OBJ_DIR)/filesystem
+TIER0_OBJ_DIR=$(BUILD_OBJ_DIR)/filesystem/tier0
+PUBLIC_OBJ_DIR=$(BUILD_OBJ_DIR)/filesystem/public
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS)
+DEBUG =  -g -ggdb
+CFLAGS+= $(DEBUG)
+
+INCLUDEDIRS=-I$(PUBLIC_SRC_DIR) -Dstrcmpi=strcasecmp
+
+LDFLAGS= -ldl tier0_$(ARCH).$(SHLIBEXT) vstdlib_$(ARCH).$(SHLIBEXT)
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) -w $(CFLAGS) -o $@ -c $<
+
+#####################################################################
+
+FS_OBJS = \
+	$(FS_OBJ_DIR)/filesystem_stdio.o \
+	$(FS_OBJ_DIR)/BaseFileSystem.o \
+	$(FS_OBJ_DIR)/linux_support.o \
+
+TIER0_OBJS = \
+	$(TIER0_OBJ_DIR)/memoverride.o 
+
+PUBLIC_OBJS = \
+	$(PUBLIC_OBJ_DIR)/interface.o \
+	$(PUBLIC_OBJ_DIR)/utlsymbol.o \
+	$(PUBLIC_OBJ_DIR)/characterset.o \
+
+all: dirs filesystem_$(ARCH).$(SHLIBEXT)
+
+dirs:
+	-mkdir $(BUILD_OBJ_DIR)
+	-mkdir $(FS_OBJ_DIR)
+	-mkdir $(TIER0_OBJ_DIR)
+	-mkdir $(PUBLIC_OBJ_DIR)
+	$(CHECK_DSP) $(SOURCE_DSP)
+
+filesystem_$(ARCH).$(SHLIBEXT): $(FS_OBJS) $(TIER0_OBJS) $(PUBLIC_OBJS)
+	$(CPLUS) $(SHLIBLDFLAGS) $(DEBUG) -o $(BUILD_DIR)/$@ $(FS_OBJS) $(TIER0_OBJS) $(PUBLIC_OBJS) $(LDFLAGS) $(CPP_LIB)
+
+$(FS_OBJ_DIR)/%.o: $(FS_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(TIER0_OBJ_DIR)/%.o: $(TIER0_PUBLIC_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(PUBLIC_OBJ_DIR)/%.o: $(PUBLIC_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+clean:
+	-rm -rf $(FS_OBJ_DIR)
+	-rm -f filesystem_$(ARCH).$(SHLIBEXT)

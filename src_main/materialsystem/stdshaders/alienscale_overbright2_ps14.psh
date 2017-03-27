@@ -1,0 +1,30 @@
+ps.1.4
+
+def c0, 1.0f, 1.0f, 1.0f, 0.5f
+def c1, 0.0f, 0.0f, 0.0f, 0.0f
+
+texld r2, t1			; normal map
+texld r3, t2			; normalization cubemap for camera direction
+texcrd r1.xyz, t3		; r1, r4, r5 contain tangent->world transform
+texcrd r4.xyz, t4		 
+texcrd r5.xyz, t5		
+
+; transform the normal into world space
+dp3 r0.r, r1, r2_bx2
+dp3 r0.g, r4, r2_bx2
+dp3 r0.b, r5, r2_bx2
+
+dp3_sat r1, r3_bx2, r0	; r1 = component of normalmap along world->eye vector
+sub r0.a, r1.a, r2.a	; r0 = r1 - (1-t2.a)
+cmp r0, r0.a, c0, c1
+mul_sat r2, r0, r1		; This effectively blats out values of r0 < t2.a
+
+phase
+
+texld r0, t0			; albedo 1
+texld r1, t0			; albedo 2
+
+lrp	r0, r2.r, r1, r0	; choose between albedo 1 + albedo 2 based on dot product
+mul_x2 r0.rgb, r0, v0	; Factor in lighting + modulation color
++ mul r0.a, r0, v0
+

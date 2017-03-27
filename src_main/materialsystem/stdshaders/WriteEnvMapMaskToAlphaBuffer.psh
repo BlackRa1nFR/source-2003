@@ -1,0 +1,13 @@
+ps.1.1
+
+;------------------------------------------------------------------------------
+; Write the alpha value from a texture to the alpha buffer
+; t0 - texture
+;
+; The texture coordinates need to be defined as follows:
+; tc0 - texcoords
+;------------------------------------------------------------------------------
+
+; Get the alpha value from the texture (that's all we care about)
+tex t0
+mov r0, t0

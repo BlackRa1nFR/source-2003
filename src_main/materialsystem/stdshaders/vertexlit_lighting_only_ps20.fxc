@@ -1,0 +1,69 @@
+//	STATIC: "BUMPMAP"				"0..1"
+//	STATIC: "DIFFUSELIGHTING"		"0..1"
+//	STATIC: "SELFILLUM"				"0..1"
+#include "common_ps_fxc.h"
+
+const float4 g_OverbrightFactor		: register( c4 );
+const float4 g_SelfIllumTint		: register( c5 );
+
+sampler BaseTextureSampler	: register( s0 );
+sampler BumpmapSampler		: register( s1 );
+
+struct PS_INPUT
+{
+	float2 baseTexCoord				: TEXCOORD0;
+	// detail textures and bumpmaps are mutually exclusive so that we have enough texcoords.
+	float2 detailOrBumpTexCoord		: TEXCOORD1;
+	// bump mapping and a separate envmap mask texture are mutually exclusive.
+	float2 envmapMaskTexCoord		: TEXCOORD2;
+	float3 worldVertToEyeVector				: TEXCOORD3;
+	float3x3 tangentSpaceTranspose	: TEXCOORD4;
+	float4 color1					: COLOR0;
+	float3 color2					: COLOR1;
+	float3 color3					: TEXCOORD7;
+};
+
+HALF4 main( PS_INPUT i ) : COLOR
+{
+	bool bBumpmap = BUMPMAP ? true : false;
+	bool bDiffuseLighting = DIFFUSELIGHTING ? true : false;
+	bool bSelfIllum = SELFILLUM ? true : false;
+	
+	HALF3 normal = float3( 0.0f, 0.0f, 1.0f );
+	HALF4 normalTexel = 1.0f;
+	HALF4 baseColor = float4( 1.0f, 1.0f, 1.0f, 1.0f );
+	if( bSelfIllum )
+	{
+		baseColor = tex2D( BaseTextureSampler, i.baseTexCoord );
+	}
+
+	if( bBumpmap )
+	{
+		normalTexel = tex2D( BumpmapSampler, i.detailOrBumpTexCoord );
+		normal = 2.0f * normalTexel - 1.0f;
+	}
+
+	HALF3 diffuseLighting = HALF3( 1.0f, 1.0f, 1.0f );
+	if( bDiffuseLighting )
+	{
+		if( bBumpmap )
+		{
+			diffuseLighting = saturate( dot( normal, bumpBasis[0] ) ) * i.color1.rgb +
+							  saturate( dot( normal, bumpBasis[1] ) ) * i.color2.rgb +
+							  saturate( dot( normal, bumpBasis[2] ) ) * i.color3.rgb;
+		}
+		else
+		{
+			diffuseLighting = i.color1.rgb;
+		}
+		diffuseLighting *= g_OverbrightFactor;
+	}
+	
+	if( bSelfIllum )
+	{
+		diffuseLighting = lerp( diffuseLighting, g_SelfIllumTint, baseColor.a );
+	}
+
+	return HALF4( diffuseLighting, 1.0f );
+}
+

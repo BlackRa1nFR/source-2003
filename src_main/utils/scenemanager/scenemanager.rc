@@ -1,0 +1,268 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_WORKSPACE           ICON    DISCARDABLE     "icon1.ico"
+MX_ICON                 ICON    DISCARDABLE     "ico00006.ico"
+IDI_SCENE               ICON    DISCARDABLE     "ico00002.ico"
+IDI_VCD                 ICON    DISCARDABLE     "ico00003.ico"
+IDI_WAV                 ICON    DISCARDABLE     "ico00004.ico"
+IDI_SPEAK               ICON    DISCARDABLE     "ico00005.ico"
+IDI_SPEAK_CHECKEDOUT    ICON    DISCARDABLE     "ico00007.ico"
+IDI_WAV_CHECKEDOUT      ICON    DISCARDABLE     "wav1.ico"
+IDI_WORKSPACE_CHECKEDOUT ICON    DISCARDABLE     "workspac.ico"
+IDI_VCD_CHECKEDOUT      ICON    DISCARDABLE     "vcd1.ico"
+IDI_PROJECT             ICON    DISCARDABLE     "ico00001.ico"
+IDI_PROJECT_CHECKEDOUT  ICON    DISCARDABLE     "project1.ico"
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_INPUTDIALOG DIALOG DISCARDABLE  0, 0, 361, 73
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Input:"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,128,47,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,186,47,50,14
+    EDITTEXT        IDC_INPUTSTRING,7,25,347,14,ES_AUTOHSCROLL
+    LTEXT           "Static",IDC_STATIC_PROMPT,7,7,347,16
+END
+
+IDD_VSSPROPERTIES DIALOG DISCARDABLE  0, 0, 246, 82
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,189,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,189,24,50,14
+    LTEXT           "VSS User Name:",IDC_STATIC,7,7,106,10
+    EDITTEXT        IDC_VSS_USERNAME,7,22,164,14,ES_AUTOHSCROLL
+    LTEXT           "VSS Project:  e.g., $/HL2/release/dev/hl2/",IDC_STATIC,
+                    7,42,232,13
+    EDITTEXT        IDC_VSS_PROJECT,7,58,232,15,ES_AUTOHSCROLL
+END
+
+IDD_SOUNDPROPERTIES DIALOG DISCARDABLE  0, 0, 512, 270
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Sound Properites"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,455,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,455,25,50,14
+    LTEXT           "Sound Name:",IDC_STATIC,7,7,174,13
+    EDITTEXT        IDC_SOUNDNAME,7,19,247,14,ES_AUTOHSCROLL
+    LTEXT           "Sound Script File:",IDC_STATIC,7,37,178,12
+    COMBOBOX        IDC_SOUNDSCRIPT,7,50,248,89,CBS_DROPDOWN | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "Sentence Text:",IDC_STATIC,131,110,55,12
+    LTEXT           "Channel:",IDC_STATIC,269,10,52,13
+    LTEXT           "Volume:",IDC_STATIC,269,27,52,13
+    LTEXT           "Soundlevel:",IDC_STATIC,269,44,52,13
+    LTEXT           "Pitch:",IDC_STATIC,269,61,52,13
+    COMBOBOX        IDC_CHANNEL,323,7,110,96,CBS_DROPDOWN | WS_VSCROLL | 
+                    WS_TABSTOP
+    COMBOBOX        IDC_VOLUME,323,24,110,96,CBS_DROPDOWN | WS_VSCROLL | 
+                    WS_TABSTOP
+    COMBOBOX        IDC_SOUNDLEVEL,323,41,110,96,CBS_DROPDOWN | WS_VSCROLL | 
+                    WS_TABSTOP
+    COMBOBOX        IDC_PITCH,323,58,110,96,CBS_DROPDOWN | WS_VSCROLL | 
+                    WS_TABSTOP
+    CONTROL         "Don't Precache",IDC_NOPRECACHE,"Button",BS_AUTO3STATE | 
+                    WS_TABSTOP,7,82,136,11
+    GROUPBOX        "Wave Files: ",IDC_STATIC,7,99,498,164
+    LISTBOX         IDC_WAVELIST,7,152,210,111,LBS_MULTIPLESEL | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "<- Add",IDC_ADDWAVE,232,155,50,14
+    PUSHBUTTON      "Remove ->",IDC_REMOVEWAVE,231,173,50,14
+    CONTROL         "Play to Owner Entity Only",IDC_OWNERONLY,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,71,105,10
+    LTEXT           "SENTENCE TEXT GOES HERE",IDC_STATIC_SENTENCETEXT,193,
+                    110,304,27
+    LTEXT           "Members:",IDC_STATIC,11,140,45,10
+    PUSHBUTTON      "Properties...",IDC_WAVEPROPERTIES,232,191,50,13
+    LISTBOX         IDC_WAVELIST_AVAILABLE,295,152,210,111,LBS_MULTIPLESEL | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Available:",IDC_STATIC,299,140,45,10
+END
+
+IDD_WAVEPROPERTIES DIALOG DISCARDABLE  0, 0, 334, 110
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Wave Properites"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,277,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,277,25,50,14
+    LTEXT           "Wav Name:",-1,7,7,174,13
+    LTEXT           "Sentence Text:",-1,7,37,72,12
+    CONTROL         "Enable voice ducking",IDC_VOICEDUCK,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,87,105,10
+    LTEXT           "WAVE NAME",IDC_WAVENAME,7,20,257,14
+    EDITTEXT        IDC_SENTENCETEXT,7,49,320,27,ES_AUTOHSCROLL
+END
+
+IDD_SOUNDPROPERTIES_MULTIPLE DIALOG DISCARDABLE  0, 0, 263, 126
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Multiple Sound Properites"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,206,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,206,25,50,14
+    LTEXT           "Channel:",-1,7,10,52,13
+    LTEXT           "Volume:",-1,7,27,52,13
+    LTEXT           "Soundlevel:",-1,7,44,52,13
+    LTEXT           "Pitch:",-1,7,61,52,13
+    COMBOBOX        IDC_CHANNEL,61,7,110,96,CBS_DROPDOWN | WS_VSCROLL | 
+                    WS_TABSTOP
+    COMBOBOX        IDC_VOLUME,61,24,110,96,CBS_DROPDOWN | WS_VSCROLL | 
+                    WS_TABSTOP
+    COMBOBOX        IDC_SOUNDLEVEL,61,41,110,96,CBS_DROPDOWN | WS_VSCROLL | 
+                    WS_TABSTOP
+    COMBOBOX        IDC_PITCH,61,58,110,96,CBS_DROPDOWN | WS_VSCROLL | 
+                    WS_TABSTOP
+    CONTROL         "Don't Precache",IDC_NOPRECACHE,"Button",BS_AUTO3STATE | 
+                    WS_TABSTOP,7,93,136,11
+    CONTROL         "Play to Owner Entity Only",IDC_OWNERONLY,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,82,105,10
+END
+
+IDD_MULTIPLEQUESTION DIALOG DISCARDABLE  0, 0, 351, 59
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Check Out Multiple"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Yes",IDC_YES,122,34,50,14
+    LTEXT           "PROMPT GOES HERE",IDC_PROMPT,7,7,337,11
+    PUSHBUTTON      "Yes All",IDC_YESALL,66,34,50,14
+    DEFPUSHBUTTON   "No",IDC_NOSINGLE,178,34,50,14
+    DEFPUSHBUTTON   "No All",IDC_NOALL,234,34,50,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_INPUTDIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 354
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 66
+    END
+
+    IDD_VSSPROPERTIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 239
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 75
+    END
+
+    IDD_SOUNDPROPERTIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 505
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 263
+    END
+
+    IDD_WAVEPROPERTIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 327
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 103
+    END
+
+    IDD_SOUNDPROPERTIES_MULTIPLE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 256
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 119
+    END
+
+    IDD_MULTIPLEQUESTION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 344
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 52
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

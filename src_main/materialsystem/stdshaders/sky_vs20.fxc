@@ -1,0 +1,30 @@
+#include "common_vs_fxc.h"
+
+const float4 cBaseTexCoordTransform[2]			:  register( c90 );
+
+struct VS_INPUT
+{
+	float4 vPos				: POSITION;
+	// make these float2's and stick the [n n 0 1] in the dot math.
+	float4 vTexCoord0		: TEXCOORD0;
+};
+
+struct VS_OUTPUT
+{
+    float4 projPos					: POSITION;	
+	float2 baseTexCoord				: TEXCOORD0;
+};
+
+VS_OUTPUT main( const VS_INPUT v )
+{
+	VS_OUTPUT o = ( VS_OUTPUT )0;
+
+	o.projPos = mul( v.vPos, cModelViewProj );
+
+	o.baseTexCoord.x = dot( v.vTexCoord0, cBaseTexCoordTransform[0] );
+	o.baseTexCoord.y = dot( v.vTexCoord0, cBaseTexCoordTransform[1] );
+
+	return o;
+}
+
+
